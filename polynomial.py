@@ -2,22 +2,26 @@ import re
 
 
 class Polynomial:
-    def __init__(self, poly_string):
-        self.poly_string = "".join(poly_string.split(" "))
-        pre_components = re.split('(; |, |\+|\-)', self.poly_string)
-        components = []
-        if "" in pre_components:
-            pre_components.remove("")
-        if pre_components[0] == "-":
-            for i in range(0, len(pre_components) - 1, 2):
-                components.append(pre_components[i] + pre_components[i+1])
+    def __init__(self, poly_string, form):
+        if form == "natural":
+            self.poly_string = "".join(poly_string.split(" "))
+            pre_components = re.split('(; |, |\+|\-)', self.poly_string)
+            components = []
+            if "" in pre_components:
+                pre_components.remove("")
+            if pre_components[0] == "-":
+                for i in range(0, len(pre_components) - 1, 2):
+                    components.append(pre_components[i] + pre_components[i+1])
+            else:
+                components.append(pre_components[0])
+                for i in range(1, len(pre_components) - 1, 2):
+                    components.append(pre_components[i] + pre_components[i+1])
+            components[0] = "+" + \
+                components[0] if components[0][0] != "-" else components[0]
+            self.components = components
+            self.parse_natural_coefficients()
         else:
-            components.append(pre_components[0])
-            for i in range(1, len(pre_components) - 1, 2):
-                components.append(pre_components[i] + pre_components[i+1])
-        components[0] = "+" + \
-            components[0] if components[0][0] != "-" else components[0]
-        self.components = components
+            
 
     def check_degree(self):
         degree = 0
@@ -30,27 +34,35 @@ class Polynomial:
                 degree = 1 if 1 > degree else degree
         return degree
 
-    def parse_coefficients(self):
+    def parse_natural_coefficients(self):
         degree = self.check_degree()
-        self.coefficients = [0 for i in range(degree + 1)]
+        self.natural_coefficients = [0 for i in range(degree + 1)]
         for elem in self.components:
             if "x" not in elem:
-                self.coefficients[0] = int(elem)
+                self.natural_coefficients[0] = int(elem)
             elif "x" in elem and "^" not in elem:
                 char = elem.split("x")[0]
                 if char == "-":
-                    self.coefficients[1] = -1
+                    self.natural_coefficients[1] = -1
                 elif char == "+":
-                    self.coefficients[1] = 1
+                    self.natural_coefficients[1] = 1
                 else:
-                    self.coefficients[1] = int(elem.split("x")[0])
+                    self.natural_coefficients[1] = int(elem.split("x")[0])
             else:
                 char = elem.split("x")[0]
                 if char == "-":
-                    self.coefficients[int(elem.split("^")[1])] = -1
+                    self.natural_coefficients[int(elem.split("^")[1])] = -1
                 elif char == "+":
-                    self.coefficients[int(elem.split("^")[1])] = 1
+                    self.natural_coefficients[int(elem.split("^")[1])] = 1
                 else:
-                    self.coefficients[int(elem.split("^")[1])] = int(
+                    self.natural_coefficients[int(elem.split("^")[1])] = int(
                         elem.split("x")[0])
-        print(self.coefficients)
+
+    def show_natual_form(self):
+        result_output = ""
+        for degree, coefficient in enumerate(self.natural_coefficients):
+            if "-" in str(coefficient):
+                result_output += f"({coefficient})x^{degree} + "
+            else:
+                result_output += f"{coefficient}x^{degree} + "
+        print(result_output[:-2])
