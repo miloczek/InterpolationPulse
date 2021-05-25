@@ -27,6 +27,7 @@ class Polynomial:
             result_b = []
             saving = 0
             current = ""
+            self.poly_string = utils.make_ones(self.poly_string)
             for index, char in enumerate(self.poly_string):
                 if char == "(":
                     saving = 1
@@ -113,3 +114,6 @@ class Polynomial:
                 a[k] = a[k] - xi * a[k+1]
         self.natural_coefficients = a
         self.show_natual_form()
+
+    def plot_natural_form(self, a, b):
+        utils.show_polynomial(a, b, self.natural_coefficients)
