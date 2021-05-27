@@ -110,10 +110,13 @@ class Polynomial:
         for i in range(n-1, -1, -1):
             xi = x[i]
             a[i] = b[i]
-            for k in range(i, n, 1):
-                a[k] = a[k] - xi * a[k+1]
+            for k in range(i, n):
+                a[k] = a[k] + (xi * a[k+1])
         self.natural_coefficients = a
-        self.show_natual_form()
 
     def plot_natural_form(self, a, b):
-        utils.show_polynomial(a, b, self.natural_coefficients)
+        utils.show_natural_polynomial(a, b, self.natural_coefficients)
+
+    def plot_newton_form(self, a, b):
+        utils.show_newton_polynomial(
+            a, b, self.newton_coefficients[1], self.newton_coefficients[0])

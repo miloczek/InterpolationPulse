@@ -17,7 +17,8 @@ def create_list_of_ints(l):
         if item.isnumeric():
             current += item
         if item == "+" or item == "-":
-            result.append(int(current))
+            if current != "":
+                result.append(int(current))
             current = item
         if index == len(l) - 1:
             result.append(current)
@@ -43,11 +44,26 @@ def prepare_to_show_natural_polynomial(x, coefficients):
     return y
 
 
-def prepare_to_show_newton_polynomials(x, coefficients_b, coefficients_x):
-    n = len()
+def prepare_to_show_newton_polynomial(x, coefficients_b, coefficients_x):
+    n = len(coefficients_x)
+    p = 1
+    y = coefficients_b[0]
+    for i in range(n):
+        p *= (x + coefficients_x[i])
+        y += coefficients_b[i+1] * p
+    return y
 
 
-def show_polynomial(a, b, coefficients):
+def show_natural_polynomial(a, b, coefficients):
     x = numpy.linspace(a, b, 100)
     plt.plot(x, prepare_to_show_natural_polynomial(x, coefficients))
+    plt.grid(True)
+    plt.show()
+
+
+def show_newton_polynomial(a, b, coefficients_b, coefficients_x):
+    x = numpy.linspace(a, b, 100)
+    plt.plot(x, prepare_to_show_newton_polynomial(
+        x, coefficients_b, coefficients_x))
+    plt.grid(True)
     plt.show()
