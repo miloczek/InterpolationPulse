@@ -1,13 +1,14 @@
 from polynomial import Polynomial
+from lagrange import Lagrange
 
 
-def main():
+def main() -> None:
     print("1. Interpolacja Lagrange'a.")
     print("2. Postacie wielomianów.")
     print("3. Zakończ pracę.")
     pick = input("Wybierz opcję: ")
     if pick == "1":
-        pass
+        lagrange_interpolation()
     elif pick == "2":
         polynomial_parse()
     elif pick == "3":
@@ -17,8 +18,14 @@ def main():
         print("Wybór nie został podjęty, ponownie uruchamiam program...")
         main()
 
+def lagrange_interpolation() -> None:
+    x = input("Podaj węzły w postaci [x0, x1, ...]: ")
+    f = input("Podaj funkcję, którą chcesz interpolować: ")
+    polynomial = Lagrange(x, f)
 
-def polynomial_parse():
+
+
+def polynomial_parse() -> None:
     print("1. Postać naturalna.")
     print("2. Postać Newtona.")
     print("3. Zakończ pracę.")
