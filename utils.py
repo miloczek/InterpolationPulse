@@ -37,7 +37,9 @@ def make_ones(s: str) -> str:
     return new_s
 
 
-def prepare_to_show_natural_polynomial(x: Union[Tuple[Any, Union[Any, float]], Any], coefficients: List[int]) -> int:
+def prepare_to_show_natural_polynomial(
+    x: Union[Tuple[Any, Union[Any, float]], Any], coefficients: List[int]
+) -> int:
     n = len(coefficients)
     y = 0
     for i in range(n):
@@ -45,13 +47,17 @@ def prepare_to_show_natural_polynomial(x: Union[Tuple[Any, Union[Any, float]], A
     return y
 
 
-def prepare_to_show_newton_polynomial(x: Union[Tuple[Any, Union[Any, float]], Any], coefficients_b: List[int], coefficients_x: List[int]) -> int:
+def prepare_to_show_newton_polynomial(
+    x: Union[Tuple[Any, Union[Any, float]], Any],
+    coefficients_b: List[int],
+    coefficients_x: List[int],
+) -> int:
     n = len(coefficients_x)
     p = 1
     y = coefficients_b[0]
     for i in range(n):
-        p *= (x + coefficients_x[i])
-        y += coefficients_b[i+1] * p
+        p *= x + coefficients_x[i]
+        y += coefficients_b[i + 1] * p
     return y
 
 
@@ -62,10 +68,11 @@ def show_natural_polynomial(a: int, b: int, coefficients: List[int]) -> None:
     plt.show()
 
 
-def show_newton_polynomial(a: int, b: int, coefficients_b: List[int], coefficients_x: List[int]) -> None:
+def show_newton_polynomial(
+    a: int, b: int, coefficients_b: List[int], coefficients_x: List[int]
+) -> None:
     x = numpy.linspace(a, b, 100)
-    plt.plot(x, prepare_to_show_newton_polynomial(
-        x, coefficients_b, coefficients_x))
+    plt.plot(x, prepare_to_show_newton_polynomial(x, coefficients_b, coefficients_x))
     plt.grid(True)
     plt.show()
 
@@ -74,8 +81,35 @@ def eval_fun(f: str, x: int) -> int:
     return eval(f)
 
 
-def compute_y(x: List[int], f: str) -> List[int]:
+def compute_y(x: List[int], f: str) -> Tuple[List[int]]:
     proper_f = ""
     for index, char in enumerate(f):
-        pass
-    print(eval_fun(f, x[0]))
+        if char == "^":
+            proper_f += "**"
+        elif (
+            (
+                index != len(f) - 1
+                and (char.isnumeric() or char == "x")
+                and (f[index + 1] == "x" or f[index + 1] == "(")
+            )
+            or (index != len(f) - 1 and char == "x" and f[index + 1].isnumeric())
+            or (
+                index != len(f) - 1
+                and char == ")"
+                and (
+                    f[index + 1] == "x"
+                    or f[index + 1] == "("
+                    or f[index + 1].isnumeric()
+                )
+            )
+        ):
+            proper_f += char + "*"
+        else:
+            proper_f += char
+    return [eval_fun(proper_f, xi) for xi in x], proper_f
+
+
+def basic_fun_plot(x, y):
+    plt.plot(x, y)
+    plt.grid(True)
+    plt.show()

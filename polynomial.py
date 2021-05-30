@@ -7,19 +7,20 @@ class Polynomial:
         self.poly_string = "".join(poly_string.split(" "))
         self.natural_coefficients = []
         if form == "natural":
-            pre_components = re.split('(; |, |\+|\-)', self.poly_string)
+            pre_components = re.split("(; |, |\+|\-)", self.poly_string)
             components = []
             if "" in pre_components:
                 pre_components.remove("")
             if pre_components[0] == "-":
                 for i in range(0, len(pre_components) - 1, 2):
-                    components.append(pre_components[i] + pre_components[i+1])
+                    components.append(pre_components[i] + pre_components[i + 1])
             else:
                 components.append(pre_components[0])
                 for i in range(1, len(pre_components) - 1, 2):
-                    components.append(pre_components[i] + pre_components[i+1])
-            components[0] = "+" + \
-                components[0] if components[0][0] != "-" else components[0]
+                    components.append(pre_components[i] + pre_components[i + 1])
+            components[0] = (
+                "+" + components[0] if components[0][0] != "-" else components[0]
+            )
             self.components = components
             self.parse_natural_coefficients()
         else:
@@ -33,7 +34,12 @@ class Polynomial:
                     saving = 1
                 if saving == 1:
                     current += char
-                if char == ")" and (index + 1) == len(self.poly_string) or char == ")" and self.poly_string[index+1] != "(":
+                if (
+                    char == ")"
+                    and (index + 1) == len(self.poly_string)
+                    or char == ")"
+                    and self.poly_string[index + 1] != "("
+                ):
                     saving = 0
                     current += char
                     result_x.append(current)
@@ -63,8 +69,9 @@ class Polynomial:
         for elem in self.components:
             splitted_elem = elem.split("^")
             if len(splitted_elem) > 1:
-                degree = int(splitted_elem[1]) if int(
-                    splitted_elem[1]) > degree else degree
+                degree = (
+                    int(splitted_elem[1]) if int(splitted_elem[1]) > degree else degree
+                )
             elif "x" in splitted_elem[0]:
                 degree = 1 if 1 > degree else degree
         return degree
@@ -91,7 +98,8 @@ class Polynomial:
                     self.natural_coefficients[int(elem.split("^")[1])] = 1
                 else:
                     self.natural_coefficients[int(elem.split("^")[1])] = int(
-                        elem.split("x")[0])
+                        elem.split("x")[0]
+                    )
 
     def show_natual_form(self):
         result_output = ""
@@ -105,13 +113,13 @@ class Polynomial:
     def change_to_natural_form(self):
         x, b = self.newton_coefficients
         n = len(b) - 1
-        a = [0 for i in range(n+1)]
+        a = [0 for i in range(n + 1)]
         a[n] = b[n]
-        for i in range(n-1, -1, -1):
+        for i in range(n - 1, -1, -1):
             xi = x[i]
             a[i] = b[i]
             for k in range(i, n):
-                a[k] = a[k] + (xi * a[k+1])
+                a[k] = a[k] + (xi * a[k + 1])
         self.natural_coefficients = a
 
     def plot_natural_form(self, a, b):
@@ -119,4 +127,5 @@ class Polynomial:
 
     def plot_newton_form(self, a, b):
         utils.show_newton_polynomial(
-            a, b, self.newton_coefficients[1], self.newton_coefficients[0])
+            a, b, self.newton_coefficients[1], self.newton_coefficients[0]
+        )
