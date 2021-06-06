@@ -11,7 +11,7 @@ def clear_list(l: List[str]) -> List[str]:
     return result
 
 
-def create_list_of_ints(l: List[str]) -> List[int]:
+def create_list_of_floats(l: List[str]) -> List[float]:
     result = []
     current = ""
     for index, item in enumerate(l):
@@ -19,7 +19,7 @@ def create_list_of_ints(l: List[str]) -> List[int]:
             current += item
         if item == "+" or item == "-":
             if current != "":
-                result.append(int(current))
+                result.append(float(current))
             current = item
         if index == len(l) - 1:
             result.append(current)
@@ -38,8 +38,8 @@ def make_ones(s: str) -> str:
 
 
 def prepare_to_show_natural_polynomial(
-    x: Union[Tuple[Any, Union[Any, float]], Any], coefficients: List[int]
-) -> int:
+    x: Union[Tuple[Any, Union[Any, float]], Any], coefficients: List[float]
+) -> float:
     n = len(coefficients)
     y = 0
     for i in range(n):
@@ -49,9 +49,9 @@ def prepare_to_show_natural_polynomial(
 
 def prepare_to_show_newton_polynomial(
     x: Union[Tuple[Any, Union[Any, float]], Any],
-    coefficients_b: List[int],
-    coefficients_x: List[int],
-) -> int:
+    coefficients_b: List[float],
+    coefficients_x: List[float],
+) -> float:
     n = len(coefficients_x)
     p = 1
     y = coefficients_b[0]
@@ -61,7 +61,7 @@ def prepare_to_show_newton_polynomial(
     return y
 
 
-def show_natural_polynomial(a: int, b: int, coefficients: List[int]) -> None:
+def show_natural_polynomial(a: float, b: float, coefficients: List[float]) -> None:
     x = numpy.linspace(a, b, 100)
     plt.plot(x, prepare_to_show_natural_polynomial(x, coefficients))
     plt.grid(True)
@@ -69,7 +69,7 @@ def show_natural_polynomial(a: int, b: int, coefficients: List[int]) -> None:
 
 
 def show_newton_polynomial(
-    a: int, b: int, coefficients_b: List[int], coefficients_x: List[int]
+    a: float, b: float, coefficients_b: List[float], coefficients_x: List[float]
 ) -> None:
     x = numpy.linspace(a, b, 100)
     plt.plot(x, prepare_to_show_newton_polynomial(x, coefficients_b, coefficients_x))
@@ -77,15 +77,17 @@ def show_newton_polynomial(
     plt.show()
 
 
-def eval_fun(f: str, x: int) -> int:
+def eval_fun(f: str, x: float) -> float:
     return eval(f)
 
 
-def compute_y(x: List[int], f: str) -> Tuple[List[int]]:
+def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
     proper_f = ""
     for index, char in enumerate(f):
         if char == "^":
             proper_f += "**"
+        elif char == ",":
+            proper_f += "."
         elif (
             (
                 index != len(f) - 1

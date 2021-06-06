@@ -6,7 +6,7 @@ import numpy
 
 class Lagrange:
     def __init__(self, x: str, function_string: str) -> None:
-        self.x = [int(xi) for xi in x.split(",")]
+        self.x = [float(xi) for xi in x.split(",") if xi != " " and xi != ""]
         self.y, self.f = utils.compute_y(self.x, function_string)
         self.lagrange_polynomial = self.make_interpolation_polynomial()
         
@@ -30,5 +30,5 @@ class Lagrange:
             for j in range(n):
                 if j != i:
                     p += f"*(x - {self.x[j]})/({self.x[i]}-{self.x[j]})"
-        result_poly += f"+{self.y[i]} * {p}"
+            result_poly += f"+{self.y[i]} * {p}"
         return result_poly

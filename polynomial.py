@@ -59,8 +59,8 @@ class Polynomial:
 
             all_x = utils.clear_list(all_x.replace("(x", "").split(")"))
             result_b = utils.create_list_of_ints(utils.clear_list(result_b))
-            x = [int(elem) for elem in all_x]
-            b = [int(elem) for elem in result_b]
+            x = [float(elem) for elem in all_x]
+            b = [float(elem) for elem in result_b]
             self.newton_coefficients = (x, b)
             self.change_to_natural_form()
 
@@ -70,7 +70,7 @@ class Polynomial:
             splitted_elem = elem.split("^")
             if len(splitted_elem) > 1:
                 degree = (
-                    int(splitted_elem[1]) if int(splitted_elem[1]) > degree else degree
+                    float(splitted_elem[1]) if float(splitted_elem[1]) > degree else degree
                 )
             elif "x" in splitted_elem[0]:
                 degree = 1 if 1 > degree else degree
@@ -81,7 +81,7 @@ class Polynomial:
         self.natural_coefficients = [0 for i in range(degree + 1)]
         for elem in self.components:
             if "x" not in elem:
-                self.natural_coefficients[0] = int(elem)
+                self.natural_coefficients[0] = float(elem)
             elif "x" in elem and "^" not in elem:
                 char = elem.split("x")[0]
                 if char == "-":
@@ -89,15 +89,15 @@ class Polynomial:
                 elif char == "+":
                     self.natural_coefficients[1] = 1
                 else:
-                    self.natural_coefficients[1] = int(elem.split("x")[0])
+                    self.natural_coefficients[1] = float(elem.split("x")[0])
             else:
                 char = elem.split("x")[0]
                 if char == "-":
-                    self.natural_coefficients[int(elem.split("^")[1])] = -1
+                    self.natural_coefficients[float(elem.split("^")[1])] = -1
                 elif char == "+":
-                    self.natural_coefficients[int(elem.split("^")[1])] = 1
+                    self.natural_coefficients[float(elem.split("^")[1])] = 1
                 else:
-                    self.natural_coefficients[int(elem.split("^")[1])] = int(
+                    self.natural_coefficients[float(elem.split("^")[1])] = int(
                         elem.split("x")[0]
                     )
 
