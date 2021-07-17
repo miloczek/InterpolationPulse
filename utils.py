@@ -4,6 +4,7 @@ from typing import List, Union, Tuple, Any
 
 
 def clear_list(l: List[str]) -> List[str]:
+    """Wyrzuca z listy puste znaki i nawiasy."""
     result = []
     for item in l:
         if item != "" and item != ")":
@@ -12,6 +13,7 @@ def clear_list(l: List[str]) -> List[str]:
 
 
 def create_list_of_floats(l: List[str]) -> List[float]:
+    """Przerabia listę stringów na listę floatów."""
     result = []
     current = ""
     for index, item in enumerate(l):
@@ -27,6 +29,7 @@ def create_list_of_floats(l: List[str]) -> List[float]:
 
 
 def make_ones(s: str) -> str:
+    """Parsuje wielomian, wstawiając jedynki w odpowiednich miejscach."""
     new_s = ""
     if s[0] == "(":
         new_s += "1"
@@ -40,6 +43,7 @@ def make_ones(s: str) -> str:
 def prepare_to_show_natural_polynomial(
     x: Union[Tuple[Any, Union[Any, float]], Any], coefficients: List[float]
 ) -> float:
+    """Na podstawie współczynników, zwraca wielomian w postaci naturalnej."""
     n = len(coefficients)
     y = 0
     for i in range(n):
@@ -52,6 +56,7 @@ def prepare_to_show_newton_polynomial(
     coefficients_b: List[float],
     coefficients_x: List[float],
 ) -> float:
+    """Na podstawie współczynników, zwraca wielomian w postaci Newtona."""
     n = len(coefficients_x)
     p = 1
     y = coefficients_b[0]
@@ -62,6 +67,7 @@ def prepare_to_show_newton_polynomial(
 
 
 def show_natural_polynomial(a: float, b: float, coefficients: List[float]) -> None:
+    """Generuje wielomian w postaci naturalnej."""
     x = numpy.linspace(a, b, 100)
     plt.plot(x, prepare_to_show_natural_polynomial(x, coefficients))
     plt.grid(True)
@@ -71,6 +77,7 @@ def show_natural_polynomial(a: float, b: float, coefficients: List[float]) -> No
 def show_newton_polynomial(
     a: float, b: float, coefficients_b: List[float], coefficients_x: List[float]
 ) -> None:
+    """Generuje wielomian w postaci Newtona."""
     x = numpy.linspace(a, b, 100)
     plt.plot(x, prepare_to_show_newton_polynomial(x, coefficients_b, coefficients_x))
     plt.grid(True)
@@ -78,10 +85,12 @@ def show_newton_polynomial(
 
 
 def eval_fun(f: str, x: float) -> float:
+    """Oblicza funkcję f na podstawie zaaplikowanego x."""
     return eval(f)
 
 
 def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
+    """Parsuje i oblicza ostateczną wartość funkcji."""
     proper_f = ""
     for index, char in enumerate(f):
         if char == "^":
@@ -112,6 +121,7 @@ def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
 
 
 def basic_fun_plot(x, y):
+    """Generuje wykres funkcji na podstawie x i y."""
     plt.plot(x, y)
     plt.grid(True)
     plt.show()

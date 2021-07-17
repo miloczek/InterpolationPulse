@@ -3,6 +3,7 @@ import utils
 
 
 class Polynomial:
+    """Reprezentacja wielomianu, głównie skupia się na parsowaniu."""
     def __init__(self, poly_string, form):
         self.poly_string = "".join(poly_string.split(" "))
         self.natural_coefficients = []
@@ -65,6 +66,7 @@ class Polynomial:
             self.change_to_natural_form()
 
     def check_degree(self):
+        """Zwraca stopień wielomianu."""
         degree = 0
         for elem in self.components:
             splitted_elem = elem.split("^")
@@ -77,6 +79,7 @@ class Polynomial:
         return degree
 
     def parse_natural_coefficients(self):
+        """Parsuje współczynniki postaci naturalnej."""
         degree = self.check_degree()
         self.natural_coefficients = [0 for i in range(degree + 1)]
         for elem in self.components:
@@ -102,6 +105,7 @@ class Polynomial:
                     )
 
     def show_natual_form(self):
+        """Zwraca formę naturaną wielomianu."""
         result_output = ""
         for degree, coefficient in enumerate(self.natural_coefficients):
             if "-" in str(coefficient):
@@ -111,6 +115,7 @@ class Polynomial:
         print(result_output[:-2])
 
     def change_to_natural_form(self):
+        """Zmienia wielomian postaci Newtona do formy naturalnej."""
         x, b = self.newton_coefficients
         n = len(b) - 1
         a = [0 for i in range(n + 1)]
@@ -123,9 +128,11 @@ class Polynomial:
         self.natural_coefficients = a
 
     def plot_natural_form(self, a, b):
+        """Generuje wykres postaci naturalnej wielomianu."""
         utils.show_natural_polynomial(a, b, self.natural_coefficients)
 
     def plot_newton_form(self, a, b):
+        """Generuje wykres postaci Newtona wielomianu."""
         utils.show_newton_polynomial(
             a, b, self.newton_coefficients[1], self.newton_coefficients[0]
         )

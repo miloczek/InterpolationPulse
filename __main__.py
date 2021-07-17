@@ -10,11 +10,14 @@ window.geometry("800x500")
 
 
 def clear_win() -> None:
+    """Pozbywa się wszyskich elementów w oknie."""
     for widgets in window.winfo_children():
         widgets.destroy()
 
 
 def main() -> None:
+    """Główna funkcja, spajająca wszystkie funkcjonalności i
+    porządkująca interfejsy."""
     clear_win()
 
     lbl_instruction = tk.Label(
@@ -44,22 +47,30 @@ def main() -> None:
     window.mainloop()
 
 
-def prepare_side_values(entry: tk.Entry, poly: Polynomial) -> None:
+def prepare_interval_values(entry: tk.Entry, poly: Polynomial) -> None:
+    """Wczytuje wartości brzegowe przedziału z pola tekstowego i
+    uruchamia wizualizację funkcji"""
     a, b = tuple(entry.get().split(","))
     poly.plot_basic_function_in_linear_area(float(a), float(b))
 
 
 def create_polynomial(lbl: tk.Label, x: str, f: str) -> None:
+    """Na podstawie wczytanych węzłów i funkcji, tworzy wielomian Lagrange'a."""
     if x == "" or x == " " or f == "" or f == " ":
         lbl.config(text="Nie wprowadzono danych", fg="red")
         return
     else:
-        global polynomial
-        polynomial = Lagrange(x, f)
-        lbl.config(text="Poprawnie wczytano dane", fg="green")
+        try:
+            global polynomial
+            polynomial = Lagrange(x, f)
+            lbl.config(text="Poprawnie wczytano dane", fg="green")
+        except Exception:
+            lbl.config(text="Błędne dane", fg="red")
+            return
 
 
 def plot_generator(poly: Polynomial) -> None:
+    """Funkcja wczytująca zakres i generująca wykres."""
     side_window = tk.Tk()
     side_window.title("Plot generator")
     side_window.geometry("600x400")
@@ -76,7 +87,7 @@ def plot_generator(poly: Polynomial) -> None:
         side_window,
         text="Generuj",
         font=("Helvetica", "16"),
-        command=lambda: prepare_side_values(etr_box_a_b, poly),
+        command=lambda: prepare_interval_values(etr_box_a_b, poly),
     )
     btn_generate_plot.pack()
 
@@ -84,6 +95,8 @@ def plot_generator(poly: Polynomial) -> None:
 
 
 def lagrange_interpolation() -> None:
+    """Główna funkcja przygotowująca wielomiany Lagrange'a. Ustawia poprawnie
+    interfejsy i uruchamia funkcje pomocnicze."""
     clear_win()
     global polynomial
     polynomial = ""
@@ -132,7 +145,7 @@ def lagrange_interpolation() -> None:
         window,
         text="Wygeneruj wykres",
         font=("Helvetica", "16"),
-        command=lambda: plot_generator(polynomial),
+        command=lambda: plot_generator(polynomial) if lbl_info.cget("text") == "Poprawnie wczytano dane" else None,
     )
     btn_make_plot.pack(side=LEFT)
     btn_exit.pack(side=BOTTOM)
