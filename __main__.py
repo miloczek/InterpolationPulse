@@ -1,4 +1,5 @@
-from tkinter.constants import BOTTOM, LEFT, NO, NONE
+from tkinter import Text, font
+from tkinter.constants import BOTTOM, INSERT, LEFT, NO, NONE, RIGHT
 from utils import clear_list, prepare_to_show_natural_polynomial
 from polynomial import Polynomial
 from lagrange import Lagrange
@@ -6,7 +7,7 @@ import tkinter as tk
 
 window = tk.Tk()
 window.title("Interpolation Pulse")
-window.geometry("800x500")
+window.geometry("1000x800")
 
 
 def clear_win() -> None:
@@ -47,29 +48,43 @@ def main() -> None:
     window.mainloop()
 
 
-def prepare_interval_values(entry: tk.Entry, poly: Polynomial) -> None:
+def show_generated_polynomial(poly: Lagrange) -> None:
+    side_window = tk.Tk()
+    side_window.title("Generated polynomial")
+    side_window.geometry("600x400")
+    text = Text(side_window)
+    text.insert(INSERT, polynomial.lagrange_polynomial)
+    text.pack()
+
+
+def prepare_interval_values(entry: tk.Entry, poly: Lagrange, mode: str) -> None:
     """Wczytuje wartości brzegowe przedziału z pola tekstowego i
     uruchamia wizualizację funkcji"""
     a, b = tuple(entry.get().split(","))
-    poly.plot_basic_function_in_linear_area(float(a), float(b))
+    if mode == "normal":
+        poly.plot_basic_function_in_linear_area(float(a), float(b))
+    else:
+        poly.plot_lagrange_in_linear_area(float(a), float(b))
 
 
-def create_polynomial(lbl: tk.Label, x: str, f: str) -> None:
+def create_polynomial(lbl_info: tk.Label, x: str, f: str) -> None:
     """Na podstawie wczytanych węzłów i funkcji, tworzy wielomian Lagrange'a."""
     if x == "" or x == " " or f == "" or f == " ":
-        lbl.config(text="Nie wprowadzono danych", fg="red")
+        lbl_info.config(text="Nie wprowadzono danych", fg="red")
         return
     else:
         try:
             global polynomial
             polynomial = Lagrange(x, f)
-            lbl.config(text="Poprawnie wczytano dane", fg="green")
-        except Exception:
-            lbl.config(text="Błędne dane", fg="red")
+            lbl_info.config(text="Poprawnie wczytano dane", fg="green")
+            show_generated_polynomial(polynomial)
+        except Exception as e:
+            lbl_info.config(text="Błędne dane", fg="red")
+            print(e)
             return
 
 
-def plot_generator(poly: Polynomial) -> None:
+def plot_generator(poly: Polynomial, mode: str) -> None:
     """Funkcja wczytująca zakres i generująca wykres."""
     side_window = tk.Tk()
     side_window.title("Plot generator")
@@ -87,7 +102,7 @@ def plot_generator(poly: Polynomial) -> None:
         side_window,
         text="Generuj",
         font=("Helvetica", "16"),
-        command=lambda: prepare_interval_values(etr_box_a_b, poly),
+        command=lambda: prepare_interval_values(etr_box_a_b, poly, mode),
     )
     btn_generate_plot.pack()
 
@@ -100,69 +115,88 @@ def lagrange_interpolation() -> None:
     clear_win()
     global polynomial
     polynomial = ""
+
     lbl_instruction = tk.Label(
         window,
         text="Interpolacja Lagrange'a",
         font=("Helvetica", "24"),
     )
-    lbl_instruction.pack()
 
     lbl_instr_x = tk.Label(
         window,
         text="Podaj węzły w postaci [x0, x1, ...]: ",
         font=("Helvetica", "16"),
     )
-    lbl_instr_x.pack()
 
     etr_box_x = tk.Entry(window, width=100)
-    etr_box_x.pack()
 
     lbl_instr_f = tk.Label(
         window,
         text="Podaj funkcję, którą chcesz interpolować: ",
         font=("Helvetica", "16"),
     )
-    lbl_instr_f.pack()
 
     etr_box_f = tk.Entry(window, width=100)
-    etr_box_f.pack()
+
+    lbl_instr_prec = tk.Label(
+        window,
+        text="Podaj precyzję (ilość miejsc po przecinku): ",
+        font=("Helvetica", "16"),
+    )
+
+    etr_box_prec = tk.Entry(window, width=3)
+
     lbl_info = tk.Label(window, text="", font=("Helvetica", "12"), fg="green")
-    lbl_info.pack()
+
     btn_load = tk.Button(
         window,
-        text="Wczytaj dane",
+        text="Wczytaj dane i pokaż wielomian",
         font=("Helvetica", "16"),
         command=lambda: create_polynomial(
-            lbl_info, str(etr_box_x.get()), str(etr_box_f.get())
+            lbl_info,
+            str(etr_box_x.get()),
+            str(etr_box_f.get()),
         ),
     )
-    btn_load.pack()
+
     btn_exit = tk.Button(
         window, text="Zakończ pracę", font=("Helvetica", "16"), command=window.destroy
     )
+
     btn_back = tk.Button(window, text="Wróć", font=("Helvetica", "16"), command=main)
-    btn_make_plot = tk.Button(
+
+    btn_make_function_plot = tk.Button(
         window,
-        text="Wygeneruj wykres",
+        text="Wygeneruj wykres wyjściowej funkcji",
         font=("Helvetica", "16"),
-        command=lambda: plot_generator(polynomial) if lbl_info.cget("text") == "Poprawnie wczytano dane" else None,
+        command=lambda: plot_generator(polynomial, "normal")
+        if lbl_info.cget("text") == "Poprawnie wczytano dane"
+        else None,
     )
-    btn_make_plot.pack(side=LEFT)
+
+    btn_make_interpolation_plot = tk.Button(
+        window,
+        text="Wygeneruj wykres wielomianu interpolacyjnego",
+        font=("Helvetica", "16"),
+        command=lambda: plot_generator(polynomial, "lagrange")
+        if lbl_info.cget("text") == "Poprawnie wczytano dane"
+        else None,
+    )
+
+    lbl_instruction.pack()
+    lbl_instr_x.pack()
+    etr_box_x.pack()
+    lbl_instr_f.pack()
+    etr_box_f.pack()
+    lbl_instr_prec.pack()
+    etr_box_prec.pack()
+    lbl_info.pack()
+    btn_load.pack()
+    btn_make_interpolation_plot.pack(side=RIGHT)
+    btn_make_function_plot.pack(side=LEFT)
     btn_exit.pack(side=BOTTOM)
     btn_back.pack(side=BOTTOM)
-    # pick = input("Wygenerować wykres? [T/N] ")
-    # if pick.lower() == "t":
-    #     print("1. Funkcja w określonych węzłach.")
-    #     print("2. Funkcja na przedziale.")
-    #     pick2 = input("Wybierz opcję: ")
-    #     if pick2 == "1":
-    #         polynomial.plot_basic_function_in_xi()
-    #     elif pick2 == "2":
-    #         a, b = tuple(input("Podaj zakres w postaci [a, b]: ").split(","))
-    #         polynomial.plot_basic_function_in_linear_area(float(a), float(b))
-    #     else:
-    #         print("Nie wybrano żadnej opcji, powrót do menu.")
-    #         main()
+
     # print("To wielomian interpolacyjny Lagrange'a: ", polynomial.lagrange_polynomial)
     # pick = input("Wygenerować wykres? [T/N] ")
     # if pick.lower() == "t":

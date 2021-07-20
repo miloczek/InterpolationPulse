@@ -9,7 +9,6 @@ class Lagrange:
         self.x = [float(xi) for xi in x.split(",") if xi != " " and xi != ""]
         self.y, self.f = utils.compute_y(self.x, function_string)
         self.lagrange_polynomial = self.make_interpolation_polynomial()
-        
 
     # def plot_basic_function_in_xi(self) -> None:
     #     utils.basic_fun_plot(self.x, self.y)
@@ -32,6 +31,9 @@ class Lagrange:
             p = "1"
             for j in range(n):
                 if j != i:
-                    p += f"*(x - {self.x[j]})/({self.x[i]}-{self.x[j]})"
-            result_poly += f"+{self.y[i]} * {p}"
+                    if self.x[j] < 0:
+                        p += f" * (x - ({self.x[j]})) / ({self.x[i]} - ({self.x[j]})) "
+                    else:
+                        p += f" * (x - {self.x[j]}) / ({self.x[i]} - {self.x[j]}) "
+            result_poly += f" + {self.y[i]} * {p} "
         return result_poly
