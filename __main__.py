@@ -63,8 +63,10 @@ def prepare_interval_values(entry: tk.Entry, poly: Lagrange, mode: str) -> None:
     a, b = tuple(entry.get().split(","))
     if mode == "normal":
         poly.plot_basic_function_in_linear_area(float(a), float(b))
-    else:
+    elif mode == "lagrange":
         poly.plot_lagrange_in_linear_area(float(a), float(b))
+    else:
+        poly.plot_compare_plot_in_linear_area(float(a), float(b))
 
 
 def create_polynomial(lbl_info: tk.Label, x: str, f: str) -> None:
@@ -159,6 +161,15 @@ def lagrange_interpolation() -> None:
         ),
     )
 
+    btn_compare_plots = tk.Button(
+        window,
+        text="Wygeneruj wykres porównawczy",
+        font=("Helvetica", "16"),
+        command=lambda: plot_generator(polynomial, "compare")
+        if lbl_info.cget("text") == "Poprawnie wczytano dane"
+        else None,
+    )
+
     btn_exit = tk.Button(
         window, text="Zakończ pracę", font=("Helvetica", "16"), command=window.destroy
     )
@@ -192,16 +203,11 @@ def lagrange_interpolation() -> None:
     etr_box_prec.pack()
     lbl_info.pack()
     btn_load.pack()
+    btn_compare_plots.pack()
     btn_make_interpolation_plot.pack(side=RIGHT)
     btn_make_function_plot.pack(side=LEFT)
     btn_exit.pack(side=BOTTOM)
     btn_back.pack(side=BOTTOM)
-
-    # print("To wielomian interpolacyjny Lagrange'a: ", polynomial.lagrange_polynomial)
-    # pick = input("Wygenerować wykres? [T/N] ")
-    # if pick.lower() == "t":
-    #     a, b = tuple(input("Podaj zakres w postaci [a, b]: ").split(","))
-    #     polynomial.plot_lagrange_in_linear_area(float(a), float(b))
 
 
 def polynomial_parse() -> None:

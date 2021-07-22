@@ -1,3 +1,4 @@
+from tkinter.constants import TRUE
 import numpy
 from matplotlib import pyplot as plt
 from typing import List, Union, Tuple, Any
@@ -120,8 +121,19 @@ def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
     return [eval_fun(proper_f, xi) for xi in x], proper_f
 
 
-def basic_fun_plot(x, y):
+def basic_fun_plot(x: Union[Tuple[Any, Union[Any, float]], Any], y: float) -> None:
     """Generuje wykres funkcji na podstawie x i y."""
     plt.plot(x, y)
+    plt.grid(True)
+    plt.show()
+
+
+def compare_fun_and_interpolation_plot(
+    x: Union[Tuple[Any, Union[Any, float]], Any], y1: float, y2: float
+) -> None:
+    fig, axs = plt.subplots(2)
+    fig.suptitle("Wykres porównawczy")
+    axs[0].plot(x, y1)
+    axs[1].plot(x, y2)
     plt.grid(True)
     plt.show()
