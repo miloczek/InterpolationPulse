@@ -90,6 +90,11 @@ def eval_fun(f: str, x: float) -> float:
     return eval(f)
 
 
+def eval_fun_with_prec(f: str, x: float, precision: int) -> float:
+    """Oblicza funkcję f na podstawie zaaplikowanego x z wybraną precyzją."""
+    return round(eval(f), precision)
+
+
 def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
     """Parsuje i oblicza ostateczną wartość funkcji."""
     proper_f = ""
@@ -119,6 +124,39 @@ def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
         else:
             proper_f += char
     return [eval_fun(proper_f, xi) for xi in x], proper_f
+
+
+def compute_y_with_prec(x: List[float], f: str, precision: int) -> Tuple[List[float]]:
+    """Parsuje i oblicza ostateczną wartość funkcji z wybraną precyzją."""
+    proper_f = ""
+    for index, char in enumerate(f):
+        if char == "^":
+            proper_f += "**"
+        elif char == ",":
+            proper_f += "."
+        elif (
+            (
+                index != len(f) - 1
+                and (char.isnumeric() or char == "x")
+                and (f[index + 1] == "x" or f[index + 1] == "(")
+            )
+            or (index != len(f) - 1 and char == "x" and f[index + 1].isnumeric())
+            or (
+                index != len(f) - 1
+                and char == ")"
+                and (
+                    f[index + 1] == "x"
+                    or f[index + 1] == "("
+                    or f[index + 1].isnumeric()
+                )
+            )
+        ):
+            proper_f += char + "*"
+        else:
+            proper_f += char
+    return [
+        eval_fun_with_prec(proper_f, round(xi, precision), precision) for xi in x
+    ], proper_f
 
 
 def basic_fun_plot(x: Union[Tuple[Any, Union[Any, float]], Any], y: float) -> None:

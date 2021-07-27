@@ -76,7 +76,7 @@ def prepare_interval_values(
         print(e)
 
 
-def create_polynomial(lbl_info: tk.Label, x: str, f: str) -> None:
+def create_polynomial(lbl_info: tk.Label, x: str, f: str, precision: str) -> None:
     """Na podstawie wczytanych węzłów i funkcji, tworzy wielomian Lagrange'a."""
     if x == "" or x == " " or f == "" or f == " ":
         lbl_info.config(text="Nie wprowadzono danych", fg="red")
@@ -84,7 +84,7 @@ def create_polynomial(lbl_info: tk.Label, x: str, f: str) -> None:
     else:
         try:
             global polynomial
-            polynomial = Lagrange(x, f)
+            polynomial = Lagrange(x, f, precision)
             lbl_info.config(text="Poprawnie wczytano dane", fg="green")
             show_generated_polynomial(polynomial)
         except Exception as e:
@@ -154,7 +154,7 @@ def lagrange_interpolation() -> None:
 
     lbl_instr_prec = tk.Label(
         window,
-        text="Podaj precyzję (ilość miejsc po przecinku): ",
+        text="Podaj precyzję (ilość miejsc po przecinku) [pole puste, dla maksymalnej dokładności]: ",
         font=("Helvetica", "16"),
     )
 
@@ -170,6 +170,7 @@ def lagrange_interpolation() -> None:
             lbl_info,
             str(etr_box_x.get()),
             str(etr_box_f.get()),
+            str(etr_box_prec.get()),
         ),
     )
 

@@ -5,10 +5,22 @@ import numpy
 class Lagrange:
     """Reprezentacja wielomianu w postaci Lagrange'a."""
 
-    def __init__(self, x: str, function_string: str) -> None:
-        self.x = [float(xi) for xi in x.split(",") if xi != " " and xi != ""]
-        self.y, self.f = utils.compute_y(self.x, function_string)
-        self.lagrange_polynomial = self.make_interpolation_polynomial()
+    def __init__(self, x: str, function_string: str, precision: str) -> None:
+        if precision == "":
+            self.x = [float(xi) for xi in x.split(",") if xi != " " and xi != ""]
+            self.y, self.f = utils.compute_y(self.x, function_string)
+            self.lagrange_polynomial = self.make_interpolation_polynomial()
+        else:
+            precision = int(precision)
+            self.x = [
+                round(float(xi), precision)
+                for xi in x.split(",")
+                if xi != " " and xi != ""
+            ]
+            self.y, self.f = utils.compute_y_with_prec(
+                self.x, function_string, precision
+            )
+            self.lagrange_polynomial = self.make_interpolation_polynomial()
 
     # def plot_basic_function_in_xi(self) -> None:
     #     utils.basic_fun_plot(self.x, self.y)
