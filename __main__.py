@@ -57,16 +57,23 @@ def show_generated_polynomial(poly: Lagrange) -> None:
     text.pack()
 
 
-def prepare_interval_values(entry: tk.Entry, poly: Lagrange, mode: str) -> None:
+def prepare_interval_values(
+    entry: tk.Entry, info: tk.Label, poly: Lagrange, mode: str
+) -> None:
     """Wczytuje wartości brzegowe przedziału z pola tekstowego i
     uruchamia wizualizację funkcji"""
-    a, b = tuple(entry.get().split(","))
-    if mode == "normal":
-        poly.plot_basic_function_in_linear_area(float(a), float(b))
-    elif mode == "lagrange":
-        poly.plot_lagrange_in_linear_area(float(a), float(b))
-    else:
-        poly.plot_compare_plot_in_linear_area(float(a), float(b))
+    try:
+        a, b = tuple(entry.get().split(","))
+        info.config(text="Poprawnie wygnerowano wykres", fg="green")
+        if mode == "normal":
+            poly.plot_basic_function_in_linear_area(float(a), float(b))
+        elif mode == "lagrange":
+            poly.plot_lagrange_in_linear_area(float(a), float(b))
+        else:
+            poly.plot_compare_plot_in_linear_area(float(a), float(b))
+    except Exception as e:
+        info.config(text="Wprowadź dobry przedział", fg="red")
+        print(e)
 
 
 def create_polynomial(lbl_info: tk.Label, x: str, f: str) -> None:
@@ -96,18 +103,23 @@ def plot_generator(poly: Polynomial, mode: str) -> None:
         text="Podaj zakres w postaci [a, b]: ",
         font=("Helvetica", "24"),
     )
-    lbl_instruction.pack()
     etr_box_a_b = tk.Entry(side_window, width=100)
-    etr_box_a_b.pack()
-
+    lbl_info = tk.Label(
+        side_window,
+        text="",
+        font=("Helvetica", "16"),
+    )
     btn_generate_plot = tk.Button(
         side_window,
         text="Generuj",
         font=("Helvetica", "16"),
-        command=lambda: prepare_interval_values(etr_box_a_b, poly, mode),
+        command=lambda: prepare_interval_values(etr_box_a_b, lbl_info, poly, mode),
     )
-    btn_generate_plot.pack()
 
+    lbl_instruction.pack()
+    etr_box_a_b.pack()
+    lbl_info.pack()
+    btn_generate_plot.pack()
     side_window.mainloop()
 
 

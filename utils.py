@@ -131,9 +131,11 @@ def basic_fun_plot(x: Union[Tuple[Any, Union[Any, float]], Any], y: float) -> No
 def compare_fun_and_interpolation_plot(
     x: Union[Tuple[Any, Union[Any, float]], Any], y1: float, y2: float
 ) -> None:
+    """Generuje wykres porównawczy funkcji wejściowej i wielomianu interpolacyjnego"""
     fig, axs = plt.subplots(2)
+    for ax in fig.axes:
+        ax.grid(True)
     fig.suptitle("Wykres porównawczy")
     axs[0].plot(x, y1)
     axs[1].plot(x, y2)
-    plt.grid(True)
     plt.show()
