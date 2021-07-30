@@ -1,10 +1,13 @@
 import re
+from tkinter.constants import NO, NONE
 import utils
+from typing import List
 
 
 class Polynomial:
     """Reprezentacja wielomianu, głównie skupia się na parsowaniu."""
-    def __init__(self, poly_string, form):
+
+    def __init__(self, poly_string: str, form: str) -> None:
         self.poly_string = "".join(poly_string.split(" "))
         self.natural_coefficients = []
         if form == "natural":
@@ -59,26 +62,28 @@ class Polynomial:
                     all_x = elem
 
             all_x = utils.clear_list(all_x.replace("(x", "").split(")"))
-            result_b = utils.create_list_of_ints(utils.clear_list(result_b))
+            result_b = utils.create_list_of_floats(utils.clear_list(result_b))
             x = [float(elem) for elem in all_x]
             b = [float(elem) for elem in result_b]
             self.newton_coefficients = (x, b)
             self.change_to_natural_form()
 
-    def check_degree(self):
+    def check_degree(self) -> int:
         """Zwraca stopień wielomianu."""
         degree = 0
         for elem in self.components:
             splitted_elem = elem.split("^")
             if len(splitted_elem) > 1:
                 degree = (
-                    float(splitted_elem[1]) if float(splitted_elem[1]) > degree else degree
+                    float(splitted_elem[1])
+                    if float(splitted_elem[1]) > degree
+                    else degree
                 )
             elif "x" in splitted_elem[0]:
                 degree = 1 if 1 > degree else degree
-        return degree
+        return int(degree)
 
-    def parse_natural_coefficients(self):
+    def parse_natural_coefficients(self) -> None:
         """Parsuje współczynniki postaci naturalnej."""
         degree = self.check_degree()
         self.natural_coefficients = [0 for i in range(degree + 1)]
@@ -96,15 +101,15 @@ class Polynomial:
             else:
                 char = elem.split("x")[0]
                 if char == "-":
-                    self.natural_coefficients[float(elem.split("^")[1])] = -1
+                    self.natural_coefficients[int(elem.split("^")[1])] = -1
                 elif char == "+":
-                    self.natural_coefficients[float(elem.split("^")[1])] = 1
+                    self.natural_coefficients[int(elem.split("^")[1])] = 1
                 else:
-                    self.natural_coefficients[float(elem.split("^")[1])] = int(
+                    self.natural_coefficients[int(elem.split("^")[1])] = float(
                         elem.split("x")[0]
                     )
 
-    def show_natual_form(self):
+    def show_natual_form(self) -> str:
         """Zwraca formę naturaną wielomianu."""
         result_output = ""
         for degree, coefficient in enumerate(self.natural_coefficients):
@@ -112,9 +117,9 @@ class Polynomial:
                 result_output += f"({coefficient})x^{degree} + "
             else:
                 result_output += f"{coefficient}x^{degree} + "
-        print(result_output[:-2])
+        return result_output[:-2]
 
-    def change_to_natural_form(self):
+    def change_to_natural_form(self) -> None:
         """Zmienia wielomian postaci Newtona do formy naturalnej."""
         x, b = self.newton_coefficients
         n = len(b) - 1
@@ -127,11 +132,11 @@ class Polynomial:
                 a[k] = a[k] + (xi * a[k + 1])
         self.natural_coefficients = a
 
-    def plot_natural_form(self, a, b):
+    def plot_natural_form(self, a: float, b: float) -> None:
         """Generuje wykres postaci naturalnej wielomianu."""
         utils.show_natural_polynomial(a, b, self.natural_coefficients)
 
-    def plot_newton_form(self, a, b):
+    def plot_newton_form(self, a: float, b: float) -> None:
         """Generuje wykres postaci Newtona wielomianu."""
         utils.show_newton_polynomial(
             a, b, self.newton_coefficients[1], self.newton_coefficients[0]
