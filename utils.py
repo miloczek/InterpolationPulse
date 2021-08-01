@@ -1,7 +1,18 @@
 from tkinter.constants import TRUE
+import tkinter as tk
 import numpy
 from matplotlib import pyplot as plt
 from typing import List, Union, Tuple, Any
+
+
+def reload() -> None:
+    __name__ = "__main__"
+
+
+def clear_win(window: tk.Tk) -> None:
+    """Pozbywa się wszyskich elementów w oknie."""
+    for widgets in window.winfo_children():
+        widgets.destroy()
 
 
 def clear_list(l: List[str]) -> List[str]:
