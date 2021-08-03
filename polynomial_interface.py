@@ -1,12 +1,14 @@
-from tkinter import Text, font
-from tkinter.constants import BOTTOM, INSERT, LEFT, NO, NONE, RIGHT
-from utils import clear_list, prepare_to_show_natural_polynomial, clear_win, reload
-from polynomial import Polynomial
-from lagrange import Lagrange
 import tkinter as tk
+from tkinter import Text
+from tkinter.constants import BOTTOM, INSERT
+
+from polynomial import Polynomial
+from utils import clear_win
+import main_interface
 
 
 def generate_natural_form(poly: Polynomial) -> None:
+    """Przedstawia na ekranie wielomian w naturalnej postaci sprowadzony z postaci Newtona."""
     side_window = tk.Tk()
     side_window.title("Generated natural form polynomial")
     side_window.geometry("600x400")
@@ -169,7 +171,12 @@ def polynomial_parse(window: tk.Tk) -> None:
         window, text="Zakończ pracę", font=("Helvetica", "16"), command=window.destroy
     )
 
-    btn_back = tk.Button(window, text="Wróć", font=("Helvetica", "16"), command=reload)
+    btn_back = tk.Button(
+        window,
+        text="Wróć",
+        font=("Helvetica", "16"),
+        command=lambda: main_interface.main(window),
+    )
 
     lbl_instruction.pack()
     btn_nat_to_newton.pack()

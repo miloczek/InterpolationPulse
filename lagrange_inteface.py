@@ -1,10 +1,10 @@
 import tkinter as tk
-from tkinter import Text, font
+from tkinter import Text
 from tkinter.constants import BOTTOM, INSERT, LEFT, NO, NONE, RIGHT
 
 from lagrange import Lagrange
-from polynomial import Polynomial
-from utils import clear_list, clear_win, prepare_to_show_natural_polynomial, reload
+from utils import clear_win
+import main_interface
 
 
 def prepare_interval_values(
@@ -69,7 +69,7 @@ def create_lagrange_polynomial(
     lbl_info: tk.Label, x: str, f: str, precision: str
 ) -> None:
     """Na podstawie wczytanych węzłów i funkcji, tworzy wielomian Lagrange'a."""
-    if x == " " or f == "":
+    if x == "" or f == "":
         lbl_info.config(text="Nie wprowadzono danych", fg="red")
         return
     else:
@@ -148,7 +148,12 @@ def lagrange_interpolation(window: tk.Tk) -> None:
         window, text="Zakończ pracę", font=("Helvetica", "16"), command=window.destroy
     )
 
-    btn_back = tk.Button(window, text="Wróć", font=("Helvetica", "16"), command=reload)
+    btn_back = tk.Button(
+        window,
+        text="Wróć",
+        font=("Helvetica", "16"),
+        command=lambda: main_interface.main(window),
+    )
 
     btn_make_function_plot = tk.Button(
         window,

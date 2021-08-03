@@ -1,5 +1,6 @@
-import utils
 import numpy
+
+import utils
 
 
 class Lagrange:

@@ -1,12 +1,12 @@
-from tkinter.constants import TRUE
 import tkinter as tk
+from tkinter.constants import TRUE
+from typing import Any, List, Tuple, Union
+
+
 import numpy
 from matplotlib import pyplot as plt
-from typing import List, Union, Tuple, Any
 
 
-def reload() -> None:
-    __name__ = "__main__"
 
 
 def clear_win(window: tk.Tk) -> None:
