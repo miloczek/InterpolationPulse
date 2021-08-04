@@ -57,6 +57,7 @@ def plot_generator(poly: Lagrange, mode: str) -> None:
 
 
 def show_generated_polynomial(poly: Lagrange) -> None:
+    """Wypisuje na ekran wygenerowany wielomian."""
     side_window = tk.Tk()
     side_window.title("Generated polynomial")
     side_window.geometry("600x400")

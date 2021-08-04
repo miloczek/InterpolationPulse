@@ -7,8 +7,6 @@ import numpy
 from matplotlib import pyplot as plt
 
 
-
-
 def clear_win(window: tk.Tk) -> None:
     """Pozbywa się wszyskich elementów w oknie."""
     for widgets in window.winfo_children():
@@ -96,7 +94,7 @@ def show_newton_polynomial(
     plt.show()
 
 
-def eval_fun(f: str, x: float) -> float:
+def eval_fun(f: str, x: Union[float, numpy.ndarray]) -> float:
     """Oblicza funkcję f na podstawie zaaplikowanego x."""
     return eval(f)
 
