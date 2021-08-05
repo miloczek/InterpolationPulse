@@ -28,6 +28,25 @@ def prepare_interval_values3(
         print(e)
 
 
+def prepare_interval_values4(
+    entry: tk.Entry, info: tk.Label, poly: Nifs3, mode: str
+) -> None:
+    """Wczytuje wartości brzegowe przedziału z pola tekstowego i
+    uruchamia wizualizację funkcji"""
+    try:
+        a, b = tuple(entry.get().split(","))
+        info.config(text="Poprawnie wygnerowano wykres", fg="green")
+        if mode == "normal":
+            poly.plot_basic_function_in_linear_area(float(a), float(b))
+        elif mode == "nifs3":
+            poly.plot_nifs3_in_linear_area4(float(a), float(b))
+        else:
+            poly.plot_compare_plot_in_linear_area4(float(a), float(b))
+    except Exception as e:
+        info.config(text="Wprowadź dobry przedział", fg="red")
+        print(e)
+
+
 def plot_generator3(poly: Nifs3, mode: str) -> None:
     """Funkcja wczytująca zakres i generująca wykres."""
     side_window = tk.Tk()
@@ -58,6 +77,36 @@ def plot_generator3(poly: Nifs3, mode: str) -> None:
     side_window.mainloop()
 
 
+def plot_generator4(poly: Nifs3, mode: str) -> None:
+    """Funkcja wczytująca zakres i generująca wykres."""
+    side_window = tk.Tk()
+    side_window.title("Plot generator")
+    side_window.geometry("600x400")
+    lbl_instruction = tk.Label(
+        side_window,
+        text="Podaj zakres w postaci [a, b]: ",
+        font=("Helvetica", "24"),
+    )
+    etr_box_a_b = tk.Entry(side_window, width=100)
+    lbl_info = tk.Label(
+        side_window,
+        text="",
+        font=("Helvetica", "16"),
+    )
+    btn_generate_plot = tk.Button(
+        side_window,
+        text="Generuj",
+        font=("Helvetica", "16"),
+        command=lambda: prepare_interval_values4(etr_box_a_b, lbl_info, poly, mode),
+    )
+
+    lbl_instruction.pack()
+    etr_box_a_b.pack()
+    lbl_info.pack()
+    btn_generate_plot.pack()
+    side_window.mainloop()
+
+
 def show_generated_polynomials(poly: Nifs3, mode: str) -> None:
     """Wypisuje na ekran wygenerowane wielomiany."""
     side_window = tk.Tk()
@@ -68,6 +117,11 @@ def show_generated_polynomials(poly: Nifs3, mode: str) -> None:
         text.insert(
             INSERT,
             f"{poly.polys[0]}, x ∈ [{poly.x[0]}, {poly.x[1]}] \n {poly.polys[1]}, x ∈ [{poly.x[1]}, {poly.x[2]}] ",
+        )
+    elif mode == "four":
+        text.insert(
+            INSERT,
+            f"{poly.polys[0]}, x ∈ [{poly.x[0]}, {poly.x[1]}] \n {poly.polys[1]}, x ∈ [{poly.x[1]}, {poly.x[2]}] \n {poly.polys[2]}, x ∈ [{poly.x[2]}, {poly.x[3]}] ",
         )
     text.pack()
 
@@ -265,7 +319,7 @@ def four_nodes_interpolation(window: tk.Tk) -> None:
         window,
         text="Wczytaj dane i pokaż wielomian",
         font=("Helvetica", "16"),
-        command=lambda: create_three_nodes_interpolation(
+        command=lambda: create_four_nodes_interpolation(
             lbl_info,
             str(etr_box_x1.get()),
             str(etr_box_x2.get()),

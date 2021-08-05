@@ -22,7 +22,7 @@ class Nifs3:
     def make_splines4(self, precision: str) -> List[str]:
         """Oblicza NIFS3 dla 4 węzłów na podstawie węzłów i wartości"""
         x1, x2, x3, x4 = self.x[0], self.x[1], self.x[2], self.x[3]
-        y1, y2, y3, y4 = self.y[0], self.y[1], self.y[2], self.y[4]
+        y1, y2, y3, y4 = self.y[0], self.y[1], self.y[2], self.y[3]
         A = np.array(
             [
                 [x1 ** 3, x1 ** 2, x1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -145,4 +145,16 @@ class Nifs3:
         x = np.linspace(a, b, 100)
         utils.compare_fun_and_interpolation_plot(
             x, utils.eval_fun(self.f, x), list(map(self.return_value_nifs33, x))
+        )
+
+    def plot_nifs3_in_linear_area4(self, a: float, b: float) -> None:
+        """Generuje wykres obliczonej NIFS3."""
+        x = np.linspace(a, b, 100)
+        utils.basic_fun_plot(x, list(map(self.return_value_nifs34, x)))
+
+    def plot_compare_plot_in_linear_area4(self, a: float, b: float) -> None:
+        """Generuje wykres porównawczy funkcji wejściowej i wielomianów NIFS3 dla 3 węzłów."""
+        x = np.linspace(a, b, 100)
+        utils.compare_fun_and_interpolation_plot(
+            x, utils.eval_fun(self.f, x), list(map(self.return_value_nifs34, x))
         )
