@@ -1,3 +1,4 @@
+from hermite_interface import hermite_interpolation
 import tkinter as tk
 from tkinter.constants import BOTTOM
 
@@ -5,7 +6,7 @@ from utils import clear_win
 from lagrange_inteface import lagrange_interpolation
 from polynomial_interface import polynomial_parse
 from nifs3_interface import nifs3_interpolation
-
+from hermite_interface import hermite_interpolation
 
 
 def main(window: tk.Tk) -> None:
@@ -38,11 +39,19 @@ def main(window: tk.Tk) -> None:
         font=("Helvetica", "16"),
         command=lambda: nifs3_interpolation(window),
     )
+
+    btn_hermite = tk.Button(
+        window,
+        text="Interpolacja Hermite'a",
+        font=("Helvetica", "16"),
+        command=lambda: hermite_interpolation(window),
+    )
     btn_exit = tk.Button(
         window, text="Zakończ pracę", font=("Helvetica", "16"), command=window.destroy
     )
     btn_lagrange.pack()
     btn_polynomial.pack()
     btn_nifs3.pack()
+    btn_hermite.pack()
     btn_exit.pack(side=BOTTOM)
     window.mainloop()

@@ -155,7 +155,7 @@ def create_four_nodes_interpolation(
     else:
         try:
             global polynomial
-            polynomial = Nifs3([x1, x2, x3], f, "four", precision)
+            polynomial = Nifs3([x1, x2, x3, x4], f, "four", precision)
             lbl_info.config(text="Poprawnie wczytano dane", fg="green")
             show_generated_polynomials(polynomial, "four")
         except Exception as e:

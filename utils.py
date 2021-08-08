@@ -99,9 +99,28 @@ def eval_fun(f: str, x: Union[float, numpy.ndarray]) -> float:
     return eval(f)
 
 
+def eval_derivative_fun(f: str, x: float, delta: float = 0.001) -> float:
+    """Oblicza wartość pochodnej funkcji dla wybranej delty."""
+    return (eval_fun(f, x + delta) - eval_fun(f, x)) / delta
+
+
 def eval_fun_with_prec(f: str, x: float, precision: int) -> float:
     """Oblicza funkcję f na podstawie zaaplikowanego x z wybraną precyzją."""
     return round(eval(f), precision)
+
+
+def eval_derivative_fun_with_prec(
+    f: str, x: float, precision: int, delta: float = 0.001
+) -> float:
+    """Oblicza wartość pochodnej funkcji dla wybranej delty z precyzją."""
+    return round(
+        (
+            eval_fun_with_prec(f, x + delta, precision)
+            - eval_fun_with_prec(f, x, precision)
+        )
+        / delta,
+        precision,
+    )
 
 
 def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
