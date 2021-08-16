@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Text
+from tkinter import Text, Widget
 from tkinter.constants import BOTTOM, INSERT, LEFT, NO, NONE, RIGHT
 
 from utils import clear_win
@@ -17,6 +17,18 @@ def show_generated_polynomial(poly: Hermite) -> None:
     text.pack()
 
 
+def show_table_of_diffs(poly: Hermite) -> None:
+    side_window = tk.Tk()
+    side_window.title("Generated table of diffs")
+    side_window.geometry("1024x800")
+    text = Text(side_window, width=1024, height=800)
+    str_of_diff_table = ""
+    for line in poly.table_of_diffs:
+        str_of_diff_table += f"{line}\n"
+    text.insert(INSERT, str_of_diff_table)
+    text.pack()
+
+
 def create_hermite_polynomial(
     lbl_info: tk.Label, x: str, f: str, precision: str
 ) -> None:
@@ -30,6 +42,9 @@ def create_hermite_polynomial(
             polynomial = Hermite(x, f, precision)
             lbl_info.config(text="Poprawnie wczytano dane", fg="green")
             show_generated_polynomial(polynomial)
+        except ZeroDivisionError:
+            lbl_info.config(text="Funkcja niemożliwa do zinterpolowania", fg="red")
+            return
         except Exception as e:
             lbl_info.config(text="Błędne dane", fg="red")
             print(e)
@@ -136,6 +151,15 @@ def hermite_interpolation(window: tk.Tk) -> None:
         ),
     )
 
+    btn_diffs_table = tk.Button(
+        window,
+        text="Wygeneruj tablicę ilorazów różnicowych",
+        font=("Helvetica", "16"),
+        command=lambda: show_table_of_diffs(polynomial)
+        if lbl_info.cget("text") == "Poprawnie wczytano dane"
+        else None,
+    )
+
     btn_compare_plots = tk.Button(
         window,
         text="Wygeneruj wykres porównawczy",
@@ -183,6 +207,7 @@ def hermite_interpolation(window: tk.Tk) -> None:
     etr_box_prec.pack()
     lbl_info.pack()
     btn_load.pack()
+    btn_diffs_table.pack()
     btn_compare_plots.pack()
     btn_make_interpolation_plot.pack(side=RIGHT)
     btn_make_function_plot.pack(side=LEFT)

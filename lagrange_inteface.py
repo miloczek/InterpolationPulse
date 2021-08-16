@@ -70,19 +70,24 @@ def create_lagrange_polynomial(
     lbl_info: tk.Label, x: str, f: str, precision: str
 ) -> None:
     """Na podstawie wczytanych węzłów i funkcji, tworzy wielomian Lagrange'a."""
-    if x == "" or f == "":
-        lbl_info.config(text="Nie wprowadzono danych", fg="red")
-        return
-    else:
-        try:
-            global polynomial
-            polynomial = Lagrange(x, f, precision)
-            lbl_info.config(text="Poprawnie wczytano dane", fg="green")
-            show_generated_polynomial(polynomial)
-        except Exception as e:
-            lbl_info.config(text="Błędne dane", fg="red")
-            print(e)
-            return
+
+    global polynomial
+    polynomial = Lagrange(x, f, precision)
+    lbl_info.config(text="Poprawnie wczytano dane", fg="green")
+    show_generated_polynomial(polynomial)
+    # if x == "" or f == "":
+    #     lbl_info.config(text="Nie wprowadzono danych", fg="red")
+    #     return
+    # else:
+    #     try:
+    #         global polynomial
+    #         polynomial = Lagrange(x, f, precision)
+    #         lbl_info.config(text="Poprawnie wczytano dane", fg="green")
+    #         show_generated_polynomial(polynomial)
+    #     except Exception as e:
+    #         lbl_info.config(text="Błędne dane", fg="red")
+    #         print(e)
+    #         return
 
 
 def lagrange_interpolation(window: tk.Tk) -> None:

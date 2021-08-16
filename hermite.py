@@ -48,25 +48,29 @@ class Hermite:
         hermite_coofincients = []
         polynomial = ""
         n = len(self.x)
-        table_of_diffs = numpy.zeros(shape=(2 * n + 1, 2 * n + 1))
+        self.table_of_diffs = numpy.zeros(shape=(2 * n + 1, 2 * n + 1))
         for i in range(0, 2 * n, 2):
-            table_of_diffs[i][0] = self.x[i // 2]
-            table_of_diffs[i + 1][0] = self.x[i // 2]
-            table_of_diffs[i][1] = self.y[i // 2]
-            table_of_diffs[i + 1][1] = self.y[i // 2]
+            self.table_of_diffs[i][0] = self.x[i // 2]
+            self.table_of_diffs[i + 1][0] = self.x[i // 2]
+            self.table_of_diffs[i][1] = self.y[i // 2]
+            self.table_of_diffs[i + 1][1] = self.y[i // 2]
         for i in range(2, 2 * n + 1):
             for j in range(1 + (i - 2), 2 * n):
                 if i == 2 and j % 2 == 1:
-                    table_of_diffs[j][i] = utils.eval_derivative_fun(
+                    self.table_of_diffs[j][i] = utils.eval_derivative_fun(
                         self.f, self.x[j // 2]
                     )
                 else:
-                    table_of_diffs[j][i] = (
-                        table_of_diffs[j][i - 1] - table_of_diffs[j - 1][i - 1]
-                    ) / (table_of_diffs[j][0] - table_of_diffs[(j - 1) - (i - 2)][0])
+                    self.table_of_diffs[j][i] = (
+                        self.table_of_diffs[j][i - 1]
+                        - self.table_of_diffs[j - 1][i - 1]
+                    ) / (
+                        self.table_of_diffs[j][0]
+                        - self.table_of_diffs[(j - 1) - (i - 2)][0]
+                    )
         diagonal = 1
-        for i in range(len(table_of_diffs) - 1):
-            hermite_coofincients.append(table_of_diffs[i][diagonal])
+        for i in range(len(self.table_of_diffs) - 1):
+            hermite_coofincients.append(self.table_of_diffs[i][diagonal])
             diagonal += 1
         polynomial += str(hermite_coofincients[0])
         add_x = True
@@ -99,27 +103,36 @@ class Hermite:
         hermite_coofincients = []
         polynomial = ""
         n = len(self.x)
-        table_of_diffs = numpy.zeros(shape=(2 * n + 1, 2 * n + 1))
+        self.table_of_diffs = numpy.zeros(shape=(2 * n + 1, 2 * n + 1))
         for i in range(0, 2 * n, 2):
-            table_of_diffs[i][0] = self.x[i // 2]
-            table_of_diffs[i + 1][0] = self.x[i // 2]
-            table_of_diffs[i][1] = self.y[i // 2]
-            table_of_diffs[i + 1][1] = self.y[i // 2]
+            self.table_of_diffs[i][0] = self.x[i // 2]
+            self.table_of_diffs[i + 1][0] = self.x[i // 2]
+            self.table_of_diffs[i][1] = self.y[i // 2]
+            self.table_of_diffs[i + 1][1] = self.y[i // 2]
         for i in range(2, 2 * n + 1):
             for j in range(1 + (i - 2), 2 * n):
                 if i == 2 and j % 2 == 1:
-                    table_of_diffs[j][i] = utils.eval_derivative_fun_with_prec(
+                    self.table_of_diffs[j][i] = utils.eval_derivative_fun_with_prec(
                         self.f, self.x[j // 2], precision
                     )
                 else:
-                    table_of_diffs[j][i] = round(
-                        (table_of_diffs[j][i - 1] - table_of_diffs[j - 1][i - 1])
-                        / (table_of_diffs[j][0] - table_of_diffs[(j - 1) - (i - 2)][0]),
+                    self.table_of_diffs[j][i] = round(
+                        (
+                            self.table_of_diffs[j][i - 1]
+                            - self.table_of_diffs[j - 1][i - 1]
+                        )
+                        / (
+                            self.table_of_diffs[j][0]
+                            - self.table_of_diffs[(j - 1) - (i - 2)][0]
+                        ),
                         precision,
                     )
+        for i in range(len(self.table_of_diffs)):
+            for j in range(len(self.table_of_diffs)):
+                self.table_of_diffs[i][j] = round(self.table_of_diffs[i][j], precision)
         diagonal = 1
-        for i in range(len(table_of_diffs) - 1):
-            hermite_coofincients.append(round(table_of_diffs[i][diagonal], precision))
+        for i in range(len(self.table_of_diffs) - 1):
+            hermite_coofincients.append(self.table_of_diffs[i][diagonal])
             diagonal += 1
         polynomial += str(hermite_coofincients[0])
         add_x = True

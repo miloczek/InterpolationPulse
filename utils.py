@@ -7,6 +7,9 @@ import numpy
 from matplotlib import pyplot as plt
 
 
+SMALL_FLOAT = numpy.finfo(float).eps
+
+
 def clear_win(window: tk.Tk) -> None:
     """Pozbywa się wszyskich elementów w oknie."""
     for widgets in window.winfo_children():
@@ -48,6 +51,10 @@ def make_ones(s: str) -> str:
             new_s += "1"
         new_s += char
     return new_s
+
+
+def return_next_not_empty_char(word: str) -> str:
+    return next(s for s in word.split() if s)
 
 
 def prepare_to_show_natural_polynomial(
@@ -126,8 +133,13 @@ def eval_derivative_fun_with_prec(
 def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
     """Parsuje i oblicza ostateczną wartość funkcji."""
     proper_f = ""
+    negative_power = False
     for index, char in enumerate(f):
         if char == "^":
+            if return_next_not_empty_char(f[index + 1 :]).startswith(
+                "-"
+            ) or return_next_not_empty_char(f[index + 1 :]).startswith("("):
+                negative_power = True
             proper_f += "**"
         elif char == ",":
             proper_f += "."
@@ -151,14 +163,28 @@ def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
             proper_f += char + "*"
         else:
             proper_f += char
-    return [eval_fun(proper_f, xi) for xi in x], proper_f
+
+    if not negative_power:
+        return [eval_fun(proper_f, xi) for xi in x], proper_f
+    else:
+        return [
+            eval_fun(proper_f, xi)
+            if xi != float(0)
+            else eval_fun(proper_f, SMALL_FLOAT)
+            for xi in x
+        ], proper_f
 
 
 def compute_y_with_prec(x: List[float], f: str, precision: int) -> Tuple[List[float]]:
     """Parsuje i oblicza ostateczną wartość funkcji z wybraną precyzją."""
     proper_f = ""
+    negative_power = False
     for index, char in enumerate(f):
         if char == "^":
+            if return_next_not_empty_char(f[index + 1 :]).startswith(
+                "-"
+            ) or return_next_not_empty_char(f[index + 1 :]).startswith("("):
+                negative_power = True
             proper_f += "**"
         elif char == ",":
             proper_f += "."
@@ -182,9 +208,17 @@ def compute_y_with_prec(x: List[float], f: str, precision: int) -> Tuple[List[fl
             proper_f += char + "*"
         else:
             proper_f += char
-    return [
-        eval_fun_with_prec(proper_f, round(xi, precision), precision) for xi in x
-    ], proper_f
+    if not negative_power:
+        return [
+            eval_fun_with_prec(proper_f, round(xi, precision), precision) for xi in x
+        ], proper_f
+    else:
+        return [
+            eval_fun_with_prec(proper_f, round(xi, precision), precision)
+            if xi != float(0)
+            else eval_fun_with_prec(proper_f, round(SMALL_FLOAT, precision), precision)
+            for xi in x
+        ], proper_f
 
 
 def basic_fun_plot(x: Union[Tuple[Any, Union[Any, float]], Any], y: float) -> None:
