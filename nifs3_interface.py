@@ -3,7 +3,6 @@ import tkinter as tk
 from tkinter import Text
 from tkinter.constants import BOTTOM, INSERT, LEFT, RIGHT
 
-from numpy.lib.polynomial import poly
 from utils import clear_win
 import main_interface
 from typing import List

@@ -1,14 +1,15 @@
 import tkinter as tk
 from tkinter import Text
-from tkinter.constants import BOTTOM, INSERT, LEFT, NO, NONE, RIGHT
+from tkinter.constants import BOTTOM, INSERT, LEFT, RIGHT
 
-from lagrange import Lagrange
+from numpy.lib.twodim_base import tri
 from utils import clear_win
 import main_interface
+from trygonometric import Trygonometric
 
 
 def prepare_interval_values(
-    entry: tk.Entry, info: tk.Label, poly: Lagrange, mode: str
+    entry: tk.Entry, info: tk.Label, poly: Trygonometric, mode: str
 ) -> None:
     """Wczytuje wartości brzegowe przedziału z pola tekstowego i
     uruchamia wizualizację funkcji"""
@@ -20,13 +21,13 @@ def prepare_interval_values(
         elif mode == "lagrange":
             poly.plot_lagrange_in_linear_area(float(a), float(b))
         else:
-            poly.plot_compare_plot_in_linear_area(float(a), float(b))
+            poly.plot_sin_cos_representation(float(a), float(b))
     except Exception as e:
         info.config(text="Wprowadź dobry przedział", fg="red")
         print(e)
 
 
-def plot_generator(poly: Lagrange, mode: str) -> None:
+def plot_generator(poly: Trygonometric, mode: str) -> None:
     """Funkcja wczytująca zakres i generująca wykres."""
     side_window = tk.Tk()
     side_window.title("Plot generator")
@@ -56,72 +57,57 @@ def plot_generator(poly: Lagrange, mode: str) -> None:
     side_window.mainloop()
 
 
-def show_generated_polynomial(poly: Lagrange) -> None:
+def show_generated_polynomial(poly: Trygonometric) -> None:
     """Wypisuje na ekran wygenerowany wielomian."""
     side_window = tk.Tk()
     side_window.title("Generated polynomial")
     side_window.geometry("600x400")
     text = Text(side_window)
-    text.insert(INSERT, poly.lagrange_polynomial)
+    text.insert(INSERT, poly.trygonometric_polynomial)
     text.pack()
 
 
-def create_lagrange_polynomial(
-    lbl_info: tk.Label, x: str, f: str, precision: str
+def create_pi_interpolation(
+    lbl_info: tk.Label,
+    x: str,
+    n: str,
 ) -> None:
-    """Na podstawie wczytanych węzłów i funkcji, tworzy wielomian Lagrange'a."""
-
-    if x == "" or f == "":
+    """Na podstawie wczytanych danych, tworzy interpolacyjny wielomian trygonometryczny funkcji pi."""
+    if x == "" or n == "":
         lbl_info.config(text="Nie wprowadzono danych", fg="red")
         return
     else:
         try:
             global polynomial
-            polynomial = Lagrange(x, f, precision)
+            polynomial = Trygonometric([x, n], "pi")
             lbl_info.config(text="Poprawnie wczytano dane", fg="green")
             show_generated_polynomial(polynomial)
         except Exception as e:
             lbl_info.config(text="Błędne dane", fg="red")
             print(e)
-            return
+    return
 
 
-def lagrange_interpolation(window: tk.Tk) -> None:
-    """Główna funkcja przygotowująca wielomiany Lagrange'a. Ustawia poprawnie
-    interfejsy i uruchamia funkcje pomocnicze."""
+def pi_interpolation(window: tk.Tk) -> None:
+    """Interpolacja trygonometryczna funkcji pi."""
     clear_win(window)
     global polynomial
     polynomial = ""
 
     lbl_instruction = tk.Label(
         window,
-        text="Interpolacja Lagrange'a",
+        text="Interpolacja trygonometryczna funkcji pi",
         font=("Helvetica", "24"),
     )
 
     lbl_instr_x = tk.Label(
         window,
-        text="Podaj węzły w postaci [x0, x1, ...]: ",
+        text="Podaj zmienne [x,n] funkcji (x * π * i)/n, gdzie i ∈ [0, n]",
         font=("Helvetica", "16"),
     )
 
-    etr_box_x = tk.Entry(window, width=100)
-
-    lbl_instr_f = tk.Label(
-        window,
-        text="Podaj funkcję, którą chcesz interpolować: ",
-        font=("Helvetica", "16"),
-    )
-
-    etr_box_f = tk.Entry(window, width=100)
-
-    lbl_instr_prec = tk.Label(
-        window,
-        text="Podaj precyzję (ilość miejsc po przecinku) [pole puste, dla maksymalnej dokładności]: ",
-        font=("Helvetica", "16"),
-    )
-
-    etr_box_prec = tk.Entry(window, width=3)
+    etr_box_x = tk.Entry(window, width=10)
+    etr_box_n = tk.Entry(window, width=10)
 
     lbl_info = tk.Label(window, text="", font=("Helvetica", "12"), fg="green")
 
@@ -129,11 +115,10 @@ def lagrange_interpolation(window: tk.Tk) -> None:
         window,
         text="Wczytaj dane i pokaż wielomian",
         font=("Helvetica", "16"),
-        command=lambda: create_lagrange_polynomial(
+        command=lambda: create_pi_interpolation(
             lbl_info,
             str(etr_box_x.get()),
-            str(etr_box_f.get()),
-            str(etr_box_prec.get()),
+            str(etr_box_n.get()),
         ),
     )
 
@@ -161,7 +146,7 @@ def lagrange_interpolation(window: tk.Tk) -> None:
         window,
         text="Wygeneruj wykres wyjściowej funkcji",
         font=("Helvetica", "16"),
-        command=lambda: plot_generator(polynomial, "normal")
+        command=lambda: plot_generator3(polynomial, "normal")
         if lbl_info.cget("text") == "Poprawnie wczytano dane"
         else None,
     )
@@ -170,7 +155,7 @@ def lagrange_interpolation(window: tk.Tk) -> None:
         window,
         text="Wygeneruj wykres wielomianu interpolacyjnego",
         font=("Helvetica", "16"),
-        command=lambda: plot_generator(polynomial, "lagrange")
+        command=lambda: plot_generator3(polynomial, "nifs3")
         if lbl_info.cget("text") == "Poprawnie wczytano dane"
         else None,
     )
@@ -178,14 +163,53 @@ def lagrange_interpolation(window: tk.Tk) -> None:
     lbl_instruction.pack()
     lbl_instr_x.pack()
     etr_box_x.pack()
-    lbl_instr_f.pack()
-    etr_box_f.pack()
-    lbl_instr_prec.pack()
-    etr_box_prec.pack()
+    etr_box_n.pack()
     lbl_info.pack()
     btn_load.pack()
     btn_compare_plots.pack()
     btn_make_interpolation_plot.pack(side=RIGHT)
     btn_make_function_plot.pack(side=LEFT)
+    btn_exit.pack(side=BOTTOM)
+    btn_back.pack(side=BOTTOM)
+
+
+def trygonometric_interpolation(window: tk.Tk) -> None:
+    """Koordynuje narzędzie interpolacji trygonometrycznej."""
+    clear_win(window)
+
+    lbl_instruction = tk.Label(
+        window,
+        text="Interpolacja trygonometryczna",
+        font=("Helvetica", "24"),
+    )
+
+    btn_three_nodes = tk.Button(
+        window,
+        text="Funkcja Pi",
+        font=("Helvetica", "16"),
+        command=lambda: pi_interpolation(window),
+    )
+
+    btn_four_nodes = tk.Button(
+        window,
+        text="Cztery węzły",
+        font=("Helvetica", "16"),
+        command=lambda: four_nodes_interpolation(window),
+    )
+
+    btn_exit = tk.Button(
+        window, text="Zakończ pracę", font=("Helvetica", "16"), command=window.destroy
+    )
+
+    btn_back = tk.Button(
+        window,
+        text="Wróć",
+        font=("Helvetica", "16"),
+        command=lambda: main_interface.main(window),
+    )
+
+    lbl_instruction.pack()
+    btn_three_nodes.pack()
+    btn_four_nodes.pack()
     btn_exit.pack(side=BOTTOM)
     btn_back.pack(side=BOTTOM)

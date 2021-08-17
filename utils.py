@@ -235,7 +235,7 @@ def compare_fun_and_interpolation_plot(
     fig, axs = plt.subplots(2)
     for ax in fig.axes:
         ax.grid(True)
-    fig.suptitle("Wykres porównawczy")
+    fig.suptitle("Wyjściowa funkcja (góra), wielomian interpolacyjny (dół)")
     axs[0].plot(x, y1)
     axs[1].plot(x, y2)
     plt.show()
