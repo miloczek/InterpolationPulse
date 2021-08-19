@@ -132,29 +132,29 @@ class Nifs3:
 
     def plot_basic_function_in_linear_area(self, a: float, b: float) -> None:
         """Generuje wykres funkcji wejściowej."""
-        x = np.linspace(a, b, 100)
+        x = np.linspace(a, b, 10000)
         utils.basic_fun_plot(x, utils.eval_fun(self.f, x))
 
     def plot_nifs3_in_linear_area3(self, a: float, b: float) -> None:
         """Generuje wykres obliczonej NIFS3."""
-        x = np.linspace(a, b, 100)
+        x = np.linspace(a, b, 10000)
         utils.basic_fun_plot(x, list(map(self.return_value_nifs33, x)))
 
     def plot_compare_plot_in_linear_area3(self, a: float, b: float) -> None:
         """Generuje wykres porównawczy funkcji wejściowej i wielomianów NIFS3 dla 3 węzłów."""
-        x = np.linspace(a, b, 100)
+        x = np.linspace(a, b, 10000)
         utils.compare_fun_and_interpolation_plot(
             x, utils.eval_fun(self.f, x), list(map(self.return_value_nifs33, x))
         )
 
     def plot_nifs3_in_linear_area4(self, a: float, b: float) -> None:
         """Generuje wykres obliczonej NIFS3."""
-        x = np.linspace(a, b, 100)
+        x = np.linspace(a, b, 10000)
         utils.basic_fun_plot(x, list(map(self.return_value_nifs34, x)))
 
     def plot_compare_plot_in_linear_area4(self, a: float, b: float) -> None:
         """Generuje wykres porównawczy funkcji wejściowej i wielomianów NIFS3 dla 3 węzłów."""
-        x = np.linspace(a, b, 100)
+        x = np.linspace(a, b, 10000)
         utils.compare_fun_and_interpolation_plot(
             x, utils.eval_fun(self.f, x), list(map(self.return_value_nifs34, x))
         )

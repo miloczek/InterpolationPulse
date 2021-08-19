@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import constants
 from tkinter.constants import TRUE
 from typing import Any, List, Tuple, Union
 
@@ -85,7 +86,7 @@ def prepare_to_show_newton_polynomial(
 
 def show_natural_polynomial(a: float, b: float, coefficients: List[float]) -> None:
     """Generuje wielomian w postaci naturalnej."""
-    x = numpy.linspace(a, b, 100)
+    x = numpy.linspace(a, b, 10000)
     plt.plot(x, prepare_to_show_natural_polynomial(x, coefficients))
     plt.grid(True)
     plt.show()
@@ -95,7 +96,7 @@ def show_newton_polynomial(
     a: float, b: float, coefficients_b: List[float], coefficients_x: List[float]
 ) -> None:
     """Generuje wielomian w postaci Newtona."""
-    x = numpy.linspace(a, b, 100)
+    x = numpy.linspace(a, b, 10000)
     plt.plot(x, prepare_to_show_newton_polynomial(x, coefficients_b, coefficients_x))
     plt.grid(True)
     plt.show()
@@ -133,16 +134,23 @@ def eval_derivative_fun_with_prec(
 def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
     """Parsuje i oblicza ostateczną wartość funkcji."""
     proper_f = ""
-    negative_power = False
+    negative_power_or_div = False
     for index, char in enumerate(f):
-        if char == "^":
+        if char == "p":
+            proper_f += "numpy.pi"
+        elif char == "i":
+            continue
+        elif char == "^":
             if return_next_not_empty_char(f[index + 1 :]).startswith(
                 "-"
             ) or return_next_not_empty_char(f[index + 1 :]).startswith("("):
-                negative_power = True
+                negative_power_or_div = True
             proper_f += "**"
         elif char == ",":
             proper_f += "."
+        elif char == "/":
+            proper_f += "/"
+            negative_power_or_div = True
         elif (
             (
                 index != len(f) - 1
@@ -163,8 +171,7 @@ def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
             proper_f += char + "*"
         else:
             proper_f += char
-
-    if not negative_power:
+    if not negative_power_or_div:
         return [eval_fun(proper_f, xi) for xi in x], proper_f
     else:
         return [

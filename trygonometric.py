@@ -1,29 +1,32 @@
 import numpy as np
 import math
+import utils
 import matplotlib.pyplot as plt
 from numpy.lib import polynomial
+from typing import List, Tuple
 
 PI = np.pi
-SMALL_FLOAT = np.finfo(float).eps
+
+SMALL_FLOAT = 1e-3
 
 
 class Trygonometric:
     """Reprezentacja wielomianu trygonometrycznego."""
 
-    def __init__(self, data: list, mode: str) -> None:
-        if mode == "pi":
-            self.x, self.n = float(data[0]), int(data[1])
-            self.n = self.n + 1 if self.n % 2 == 0 else self.n
-            self.points = self.return_list_of_points(self.x, self.n)
-            self.aj_coofs, self.bj_coofs = self.get_sin_cos_representation(self.points)
-            self.trygonometric_polynomial = (
-                self.show_interpolation_trygonometric_polynomial(
-                    self.aj_coofs, self.bj_coofs
-                )
-            )
-            # plot_sin_cos_representation(A, B, points)
+    def __init__(self, f: str, n: str) -> None:
+        n = int(n)
+        self.n = n + 1 if n % 2 == 0 else n
+        self.x_points = np.linspace(-10, 10, n)
+        self.points, self.f = utils.compute_y(self.x_points, f)
+        self.aj_coofs, self.bj_coofs = self.generate_a_b_c_cooficients()
+        self.trygonometric_polynomial = (
+            self.show_interpolation_trygonometric_polynomial()
+        )
 
-    def create_aj_cooficients(self, cj_coofs, mid_interval_index):
+    def create_aj_cooficients(
+        self, cj_coofs: np.array, mid_interval_index: int
+    ) -> list:
+        """Generuje współczynniki aj."""
         aj_coofs = [2 * cj_coofs[mid_interval_index]]
         for i in range(1, mid_interval_index + 1):
             aj_coofs.append(
@@ -31,7 +34,10 @@ class Trygonometric:
             )
         return aj_coofs
 
-    def create_bj_cooficients(self, cj_coofs, mid_interval_index):
+    def create_bj_cooficients(
+        self, cj_coofs: np.array, mid_interval_index: int
+    ) -> list:
+        """Generuje współczynniki bj."""
         bj_coofs = [0]
         for i in range(1, mid_interval_index + 1):
             bj_coofs.append(
@@ -42,23 +48,27 @@ class Trygonometric:
             )
         return bj_coofs
 
-    def create_cj_cooficients(self, points):
-        n = len(points)
-        ys = np.array(points, dtype=np.complex_)
+    def create_cj_cooficients(self) -> np.array:
+        """Generuje współczynniki cj przy użyciu FFT."""
+        n = len(self.points)
+        ys = np.array(self.points, dtype=np.complex_)
         iteration_start = -(n - 1) // 2
         iteration_end = (n - 1) // 2 + 1
 
-        w = complex(np.cos(2 * PI / n), np.sin(2 * PI / n))
+        trygonometric_vals = complex(np.cos(2 * PI / n), np.sin(2 * PI / n))
         fourier_matrix = np.array(
             [
-                [w ** (j * k) for j in range(n)]
+                [trygonometric_vals ** (j * k) for j in range(n)]
                 for k in range(iteration_start, iteration_end)
             ]
         )
         cj_coofs = (1 / n) * (np.conj(fourier_matrix) @ ys)
         return cj_coofs
 
-    def replace_small_imag_with_real(self, aj_coofs, bj_coofs):
+    def replace_small_imag_with_real(
+        self, aj_coofs: list, bj_coofs: list
+    ) -> Tuple[np.array, np.array]:
+        """Zastępuje zbyt małe części urojone współczynników"""
         for i in range(len(aj_coofs)):
             aj_coofs[i] = (
                 aj_coofs[i].real if aj_coofs[i].imag < SMALL_FLOAT else aj_coofs[i]
@@ -70,8 +80,9 @@ class Trygonometric:
 
         return np.array(aj_coofs), np.array(bj_coofs)
 
-    def get_sin_cos_representation(self, points):
-        cj_coofs = self.create_cj_cooficients(points)
+    def generate_a_b_c_cooficients(self) -> Tuple[np.array, np.array]:
+        """Koordynuje generację współczynników potrzebnych do stworzenia wielomianu interpolacyjnego"""
+        cj_coofs = self.create_cj_cooficients()
         mid_interval_index = math.floor(len(cj_coofs) / 2)
 
         aj_coofs = self.create_aj_cooficients(cj_coofs, mid_interval_index)
@@ -79,10 +90,10 @@ class Trygonometric:
 
         return self.replace_small_imag_with_real(aj_coofs, bj_coofs)
 
-    def show_interpolation_trygonometric_polynomial(self, A, B):
-        polynomial = f"{A[0]} / 2 "
-        for i in range(1, len(A)):
-            polynomial += f"+ {A[i]} * cos({i} * x) + {B[i]} * sin({i} * x) "
+    def show_interpolation_trygonometric_polynomial(self) -> str:
+        polynomial = f"{self.aj_coofs[0]} / 2 "
+        for i in range(1, len(self.aj_coofs)):
+            polynomial += f"+ {self.aj_coofs[i]} * cos({i} * x) + {self.bj_coofs[i]} * sin({i} * x) "
         return polynomial
 
     def eval_sin_cos_representation(self, t, A, B):
@@ -90,29 +101,13 @@ class Trygonometric:
             A[n] * np.cos(n * t) + B[n] * np.sin(n * t) for n in range(1, len(A))
         )
 
-    def plot_sin_cos_representation(self, start=-10, end=10):
-        Xs = np.linspace(start, end, 5000)
-        Ys = [
-            self.eval_sin_cos_representation(t, self.aj_coofs, self.bj_coofs)
-            for t in Xs
+    def compare_fun_and_interpolation_plot(self, a, b):
+        x = np.linspace(a, b, 10000)
+        y = [
+            self.eval_sin_cos_representation(i, self.aj_coofs, self.bj_coofs) for i in x
         ]
-
-        n = len(self.points)
-        x_points = np.array([(2 * PI * i) / n for i in range(n)])
-
-        plt.figure(figsize=(14, 7))
+        plt.suptitle("Wykres funkcji interpolacyjnej")
         plt.grid(True)
-        plt.plot(Xs, Ys)
-        plt.scatter(x_points, self.points, c="black")
+        plt.plot(x, y)
+        plt.scatter(self.x_points, self.points, c="black")
         plt.show()
-
-    def return_list_of_points(self, x, n):
-        return [x * PI * i / n for i in range(n)]
-
-    # if __name__ == "__main__":
-    #     # points = list(map(float, sys.argv[1:]))
-    #     # Xs = np.linspace(-10, 10, 5000)
-    #     points = return_list_of_points(43)
-    #     A, B = get_sin_cos_representation(points)
-
-    #     plot_sin_cos_representation(A, B, points)

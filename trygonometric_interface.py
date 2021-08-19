@@ -13,18 +13,26 @@ def prepare_interval_values(
 ) -> None:
     """Wczytuje wartości brzegowe przedziału z pola tekstowego i
     uruchamia wizualizację funkcji"""
-    try:
-        a, b = tuple(entry.get().split(","))
-        info.config(text="Poprawnie wygnerowano wykres", fg="green")
-        if mode == "normal":
-            poly.plot_basic_function_in_linear_area(float(a), float(b))
-        elif mode == "lagrange":
-            poly.plot_lagrange_in_linear_area(float(a), float(b))
-        else:
-            poly.plot_sin_cos_representation(float(a), float(b))
-    except Exception as e:
-        info.config(text="Wprowadź dobry przedział", fg="red")
-        print(e)
+    a, b = tuple(entry.get().split(","))
+    info.config(text="Poprawnie wygnerowano wykres", fg="green")
+    if mode == "normal":
+        poly.plot_basic_function_in_linear_area(float(a), float(b))
+    elif mode == "lagrange":
+        poly.plot_lagrange_in_linear_area(float(a), float(b))
+    else:
+        poly.compare_fun_and_interpolation_plot(float(a), float(b))
+    # try:
+    #     a, b = tuple(entry.get().split(","))
+    #     info.config(text="Poprawnie wygnerowano wykres", fg="green")
+    #     if mode == "normal":
+    #         poly.plot_basic_function_in_linear_area(float(a), float(b))
+    #     elif mode == "lagrange":
+    #         poly.plot_lagrange_in_linear_area(float(a), float(b))
+    #     else:
+    #         poly.compare_fun_and_interpolation_plot(float(a), float(b))
+    # except Exception as e:
+    #     info.config(text="Wprowadź dobry przedział", fg="red")
+    #     print(e)
 
 
 def plot_generator(poly: Trygonometric, mode: str) -> None:
@@ -67,19 +75,19 @@ def show_generated_polynomial(poly: Trygonometric) -> None:
     text.pack()
 
 
-def create_pi_interpolation(
+def create_trygonometric_interpolation(
     lbl_info: tk.Label,
-    x: str,
+    f: str,
     n: str,
 ) -> None:
-    """Na podstawie wczytanych danych, tworzy interpolacyjny wielomian trygonometryczny funkcji pi."""
-    if x == "" or n == "":
+    """Na podstawie wczytanych danych, tworzy interpolacyjny wielomian trygonometryczny."""
+    if f == "" or n == "":
         lbl_info.config(text="Nie wprowadzono danych", fg="red")
         return
     else:
         try:
             global polynomial
-            polynomial = Trygonometric([x, n], "pi")
+            polynomial = Trygonometric(f, n)
             lbl_info.config(text="Poprawnie wczytano dane", fg="green")
             show_generated_polynomial(polynomial)
         except Exception as e:
@@ -88,25 +96,25 @@ def create_pi_interpolation(
     return
 
 
-def pi_interpolation(window: tk.Tk) -> None:
-    """Interpolacja trygonometryczna funkcji pi."""
+def trygonometric_interpolation(window: tk.Tk) -> None:
+    """Interpolacja trygonometryczna funkcji."""
     clear_win(window)
     global polynomial
     polynomial = ""
 
     lbl_instruction = tk.Label(
         window,
-        text="Interpolacja trygonometryczna funkcji pi",
+        text="Interpolacja trygonometryczna funkcji",
         font=("Helvetica", "24"),
     )
 
     lbl_instr_x = tk.Label(
         window,
-        text="Podaj zmienne [x,n] funkcji (x * π * i)/n, gdzie i ∈ [0, n]",
+        text="Podaj funkcję generującą punkty i ich ilość, na podstawie której chcemy otrzymać interpolacyjną funkcję okresową.",
         font=("Helvetica", "16"),
     )
 
-    etr_box_x = tk.Entry(window, width=10)
+    etr_box_f = tk.Entry(window, width=100)
     etr_box_n = tk.Entry(window, width=10)
 
     lbl_info = tk.Label(window, text="", font=("Helvetica", "12"), fg="green")
@@ -115,9 +123,9 @@ def pi_interpolation(window: tk.Tk) -> None:
         window,
         text="Wczytaj dane i pokaż wielomian",
         font=("Helvetica", "16"),
-        command=lambda: create_pi_interpolation(
+        command=lambda: create_trygonometric_interpolation(
             lbl_info,
-            str(etr_box_x.get()),
+            str(etr_box_f.get()),
             str(etr_box_n.get()),
         ),
     )
@@ -142,74 +150,12 @@ def pi_interpolation(window: tk.Tk) -> None:
         command=lambda: main_interface.main(window),
     )
 
-    btn_make_function_plot = tk.Button(
-        window,
-        text="Wygeneruj wykres wyjściowej funkcji",
-        font=("Helvetica", "16"),
-        command=lambda: plot_generator3(polynomial, "normal")
-        if lbl_info.cget("text") == "Poprawnie wczytano dane"
-        else None,
-    )
-
-    btn_make_interpolation_plot = tk.Button(
-        window,
-        text="Wygeneruj wykres wielomianu interpolacyjnego",
-        font=("Helvetica", "16"),
-        command=lambda: plot_generator3(polynomial, "nifs3")
-        if lbl_info.cget("text") == "Poprawnie wczytano dane"
-        else None,
-    )
-
     lbl_instruction.pack()
     lbl_instr_x.pack()
-    etr_box_x.pack()
+    etr_box_f.pack()
     etr_box_n.pack()
     lbl_info.pack()
     btn_load.pack()
     btn_compare_plots.pack()
-    btn_make_interpolation_plot.pack(side=RIGHT)
-    btn_make_function_plot.pack(side=LEFT)
-    btn_exit.pack(side=BOTTOM)
-    btn_back.pack(side=BOTTOM)
-
-
-def trygonometric_interpolation(window: tk.Tk) -> None:
-    """Koordynuje narzędzie interpolacji trygonometrycznej."""
-    clear_win(window)
-
-    lbl_instruction = tk.Label(
-        window,
-        text="Interpolacja trygonometryczna",
-        font=("Helvetica", "24"),
-    )
-
-    btn_three_nodes = tk.Button(
-        window,
-        text="Funkcja Pi",
-        font=("Helvetica", "16"),
-        command=lambda: pi_interpolation(window),
-    )
-
-    btn_four_nodes = tk.Button(
-        window,
-        text="Cztery węzły",
-        font=("Helvetica", "16"),
-        command=lambda: four_nodes_interpolation(window),
-    )
-
-    btn_exit = tk.Button(
-        window, text="Zakończ pracę", font=("Helvetica", "16"), command=window.destroy
-    )
-
-    btn_back = tk.Button(
-        window,
-        text="Wróć",
-        font=("Helvetica", "16"),
-        command=lambda: main_interface.main(window),
-    )
-
-    lbl_instruction.pack()
-    btn_three_nodes.pack()
-    btn_four_nodes.pack()
     btn_exit.pack(side=BOTTOM)
     btn_back.pack(side=BOTTOM)

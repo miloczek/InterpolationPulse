@@ -27,17 +27,17 @@ class Lagrange:
 
     def plot_basic_function_in_linear_area(self, a: float, b: float) -> None:
         """Generuje wykres funkcji wejściowej."""
-        x = numpy.linspace(a, b, 100)
+        x = numpy.linspace(a, b, 10000)
         utils.basic_fun_plot(x, utils.eval_fun(self.f, x))
 
     def plot_lagrange_in_linear_area(self, a: float, b: float) -> None:
         """Generuje wykres obliczonego wielomianu Lagange'a."""
-        x = numpy.linspace(a, b, 100)
+        x = numpy.linspace(a, b, 10000)
         utils.basic_fun_plot(x, utils.eval_fun(self.lagrange_polynomial, x))
 
     def plot_compare_plot_in_linear_area(self, a: float, b: float) -> None:
         """Generuje wykres porównawczy funkcji wejściowej i wielomianu Lagrange'a."""
-        x = numpy.linspace(a, b, 100)
+        x = numpy.linspace(a, b, 10000)
         utils.compare_fun_and_interpolation_plot(
             x, utils.eval_fun(self.f, x), utils.eval_fun(self.lagrange_polynomial, x)
         )
