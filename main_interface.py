@@ -8,6 +8,7 @@ from polynomial_interface import polynomial_parse
 from nifs3_interface import nifs3_interpolation
 from hermite_interface import hermite_interpolation
 from trygonometric_interface import trygonometric_interpolation
+from chebyshev_interface import chebyshev_polynomials
 
 
 def main(window: tk.Tk) -> None:
@@ -54,6 +55,14 @@ def main(window: tk.Tk) -> None:
         font=("Helvetica", "16"),
         command=lambda: trygonometric_interpolation(window),
     )
+
+    btn_chebyshev = tk.Button(
+        window,
+        text="Wielomiany Czebyszewa",
+        font=("Helvetica", "16"),
+        command=lambda: chebyshev_polynomials(window),
+    )
+
     btn_exit = tk.Button(
         window, text="Zakończ pracę", font=("Helvetica", "16"), command=window.destroy
     )
@@ -62,5 +71,6 @@ def main(window: tk.Tk) -> None:
     btn_nifs3.pack()
     btn_hermite.pack()
     btn_trygonometric.pack()
+    btn_chebyshev.pack()
     btn_exit.pack(side=BOTTOM)
     window.mainloop()

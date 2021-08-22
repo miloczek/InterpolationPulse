@@ -1,11 +1,12 @@
 import math
 import tkinter as tk
-from tkinter import constants
+from tkinter import Label, constants
 from tkinter.constants import TRUE
 from typing import Any, List, Tuple, Union
 
 
 import numpy
+from numpy.polynomial import Chebyshev
 from matplotlib import pyplot as plt
 
 
@@ -262,3 +263,11 @@ def chebyshev_nodes(n: int) -> List[float]:
     return list(numpy.polynomial.chebyshev.chebroots(tuple(xs)))
 
 
+def chebyshev_plot(a: float, b: float, n: int) -> None:
+    """Generuje wykresy kolejnych węzłów Czebyszewa."""
+    x = numpy.linspace(a, b, 10000)
+    for i in range(n):
+        axis = plt.plot(x, Chebyshev.basis(i)(x), lw=2, label=f"$T_{i}$")
+    plt.grid(True)
+    plt.legend(loc="upper left")
+    plt.show()

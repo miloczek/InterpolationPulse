@@ -16,13 +16,13 @@ def prepare_interval_values(
     uruchamia wizualizację funkcji"""
     try:
         a, b = tuple(entry.get().split(","))
-        info.config(text="Poprawnie wygnerowano wykres", fg="green")
         if mode == "normal":
             poly.plot_basic_function_in_linear_area(float(a), float(b))
         elif mode == "lagrange":
             poly.plot_lagrange_in_linear_area(float(a), float(b))
         else:
             poly.plot_compare_plot_in_linear_area(float(a), float(b))
+        info.config(text="Poprawnie wygnerowano wykres", fg="green")
     except Exception as e:
         info.config(text="Wprowadź dobry przedział", fg="red")
         print(e)
