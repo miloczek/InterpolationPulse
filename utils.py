@@ -1,3 +1,4 @@
+import math
 import tkinter as tk
 from tkinter import constants
 from tkinter.constants import TRUE
@@ -138,7 +139,58 @@ def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
     for index, char in enumerate(f):
         if char == "p":
             proper_f += "numpy.pi"
-        elif char == "i":
+        elif char == "i" or char == " ":
+            continue
+        elif char == "^":
+            if return_next_not_empty_char(f[index + 1 :]).startswith(
+                "-"
+            ) or return_next_not_empty_char(f[index + 1 :]).startswith("("):
+                negative_power_or_div = True
+            proper_f += "**"
+        elif char == ",":
+            proper_f += "."
+        elif char == "/":
+            proper_f += "/"
+            negative_power_or_div = True
+        elif (
+            (
+                index != len(f) - 1
+                and (char.isnumeric() or char == "x")
+                and (f[index + 1] == "x" or f[index + 1] == "(" or f[index + 1] == "p")
+            )
+            or (index != len(f) - 1 and char == "x" and f[index + 1].isnumeric())
+            or (
+                index != len(f) - 1
+                and char == ")"
+                and (
+                    f[index + 1] == "x"
+                    or f[index + 1] == "("
+                    or f[index + 1].isnumeric()
+                )
+            )
+        ):
+            proper_f += char + "*"
+        else:
+            proper_f += char
+    if not negative_power_or_div:
+        return [eval_fun(proper_f, xi) for xi in x], proper_f
+    else:
+        return [
+            eval_fun(proper_f, xi)
+            if xi != float(0)
+            else eval_fun(proper_f, SMALL_FLOAT)
+            for xi in x
+        ], proper_f
+
+
+def compute_y_with_prec(x: List[float], f: str, precision: int) -> Tuple[List[float]]:
+    """Parsuje i oblicza ostateczną wartość funkcji z wybraną precyzją."""
+    proper_f = ""
+    negative_power_or_div = False
+    for index, char in enumerate(f):
+        if char == "p":
+            proper_f += "numpy.pi"
+        elif char == "i" or char == " ":
             continue
         elif char == "^":
             if return_next_not_empty_char(f[index + 1 :]).startswith(
@@ -172,50 +224,6 @@ def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
         else:
             proper_f += char
     if not negative_power_or_div:
-        return [eval_fun(proper_f, xi) for xi in x], proper_f
-    else:
-        return [
-            eval_fun(proper_f, xi)
-            if xi != float(0)
-            else eval_fun(proper_f, SMALL_FLOAT)
-            for xi in x
-        ], proper_f
-
-
-def compute_y_with_prec(x: List[float], f: str, precision: int) -> Tuple[List[float]]:
-    """Parsuje i oblicza ostateczną wartość funkcji z wybraną precyzją."""
-    proper_f = ""
-    negative_power = False
-    for index, char in enumerate(f):
-        if char == "^":
-            if return_next_not_empty_char(f[index + 1 :]).startswith(
-                "-"
-            ) or return_next_not_empty_char(f[index + 1 :]).startswith("("):
-                negative_power = True
-            proper_f += "**"
-        elif char == ",":
-            proper_f += "."
-        elif (
-            (
-                index != len(f) - 1
-                and (char.isnumeric() or char == "x")
-                and (f[index + 1] == "x" or f[index + 1] == "(")
-            )
-            or (index != len(f) - 1 and char == "x" and f[index + 1].isnumeric())
-            or (
-                index != len(f) - 1
-                and char == ")"
-                and (
-                    f[index + 1] == "x"
-                    or f[index + 1] == "("
-                    or f[index + 1].isnumeric()
-                )
-            )
-        ):
-            proper_f += char + "*"
-        else:
-            proper_f += char
-    if not negative_power:
         return [
             eval_fun_with_prec(proper_f, round(xi, precision), precision) for xi in x
         ], proper_f
@@ -246,3 +254,11 @@ def compare_fun_and_interpolation_plot(
     axs[0].plot(x, y1)
     axs[1].plot(x, y2)
     plt.show()
+
+
+def chebyshev_nodes(n: int) -> List[float]:
+    """Generuje węzły na podstawie miejsc zerowych wielomianów Czebyszewa."""
+    xs = [1 for i in range(n + 1)]
+    return list(numpy.polynomial.chebyshev.chebroots(tuple(xs)))
+
+

@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import Text, Widget
-from tkinter.constants import BOTTOM, INSERT, LEFT, NO, NONE, RIGHT
+from tkinter.constants import BOTTOM, INSERT, LEFT, NO, NONE, RIGHT, END
 
-from utils import clear_win
+from utils import clear_win, chebyshev_nodes
 import main_interface
 from hermite import Hermite
 
@@ -100,6 +100,22 @@ def plot_generator(poly: Hermite, mode: str) -> None:
     side_window.mainloop()
 
 
+def generate_chebyshev_nodes(lbl_info: tk.Label, etr_box_x: tk.Entry, n: str) -> None:
+    """Generuje węzły Czebyszewa na podstawie podanej ilości."""
+    try:
+        n = int(n)
+        nodes_str = ""
+        lbl_info.config(text="", fg="green")
+        for node in chebyshev_nodes(n):
+            nodes_str += f"{node}, "
+        etr_box_x.delete(0, END)
+        etr_box_x.insert(0, nodes_str)
+    except Exception as e:
+        lbl_info.config(text="Ilość musi być wyrażona liczbą", fg="red")
+        print(e)
+        return
+
+
 def hermite_interpolation(window: tk.Tk) -> None:
     """Główna funkcja przygotowująca wielomiany Hermite'a. Ustawia poprawnie
     interfejsy i uruchamia funkcje pomocnicze."""
@@ -169,6 +185,25 @@ def hermite_interpolation(window: tk.Tk) -> None:
         else None,
     )
 
+    lbl_instr_chebyshev = tk.Label(
+        window,
+        text="Podaj ilość wielomianów Czebyszewa, z których chcesz uzyskać węzły: ",
+        font=("Helvetica", "16"),
+    )
+
+    etr_box_chebyshev = tk.Entry(window, width=3)
+
+    btn_make_chebyshev_nodes = tk.Button(
+        window,
+        text="Wygeneruj węzły Czebyszewa",
+        font=("Helvetica", "16"),
+        command=lambda: generate_chebyshev_nodes(
+            lbl_info, etr_box_x, str(etr_box_chebyshev.get())
+        )
+        if etr_box_chebyshev.get() != ""
+        else None,
+    )
+
     btn_exit = tk.Button(
         window, text="Zakończ pracę", font=("Helvetica", "16"), command=window.destroy
     )
@@ -209,6 +244,9 @@ def hermite_interpolation(window: tk.Tk) -> None:
     btn_load.pack()
     btn_diffs_table.pack()
     btn_compare_plots.pack()
+    lbl_instr_chebyshev.pack()
+    etr_box_chebyshev.pack()
+    btn_make_chebyshev_nodes.pack()
     btn_make_interpolation_plot.pack(side=RIGHT)
     btn_make_function_plot.pack(side=LEFT)
     btn_exit.pack(side=BOTTOM)

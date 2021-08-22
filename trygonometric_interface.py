@@ -9,33 +9,21 @@ from trygonometric import Trygonometric
 
 
 def prepare_interval_values(
-    entry: tk.Entry, info: tk.Label, poly: Trygonometric, mode: str
+    entry: tk.Entry, info: tk.Label, poly: Trygonometric
 ) -> None:
     """Wczytuje wartości brzegowe przedziału z pola tekstowego i
     uruchamia wizualizację funkcji"""
-    a, b = tuple(entry.get().split(","))
-    info.config(text="Poprawnie wygnerowano wykres", fg="green")
-    if mode == "normal":
-        poly.plot_basic_function_in_linear_area(float(a), float(b))
-    elif mode == "lagrange":
-        poly.plot_lagrange_in_linear_area(float(a), float(b))
-    else:
-        poly.compare_fun_and_interpolation_plot(float(a), float(b))
-    # try:
-    #     a, b = tuple(entry.get().split(","))
-    #     info.config(text="Poprawnie wygnerowano wykres", fg="green")
-    #     if mode == "normal":
-    #         poly.plot_basic_function_in_linear_area(float(a), float(b))
-    #     elif mode == "lagrange":
-    #         poly.plot_lagrange_in_linear_area(float(a), float(b))
-    #     else:
-    #         poly.compare_fun_and_interpolation_plot(float(a), float(b))
-    # except Exception as e:
-    #     info.config(text="Wprowadź dobry przedział", fg="red")
-    #     print(e)
+    try:
+        a, b = tuple(entry.get().split(","))
+        info.config(text="Poprawnie wygnerowano wykres", fg="green")
+        poly.interpolation_plot(float(a), float(b))
+
+    except Exception as e:
+        info.config(text="Wprowadź dobry przedział", fg="red")
+        print(e)
 
 
-def plot_generator(poly: Trygonometric, mode: str) -> None:
+def plot_generator(poly: Trygonometric) -> None:
     """Funkcja wczytująca zakres i generująca wykres."""
     side_window = tk.Tk()
     side_window.title("Plot generator")
@@ -55,7 +43,7 @@ def plot_generator(poly: Trygonometric, mode: str) -> None:
         side_window,
         text="Generuj",
         font=("Helvetica", "16"),
-        command=lambda: prepare_interval_values(etr_box_a_b, lbl_info, poly, mode),
+        command=lambda: prepare_interval_values(etr_box_a_b, lbl_info, poly),
     )
 
     lbl_instruction.pack()
@@ -134,7 +122,7 @@ def trygonometric_interpolation(window: tk.Tk) -> None:
         window,
         text="Wygeneruj wykres porównawczy",
         font=("Helvetica", "16"),
-        command=lambda: plot_generator(polynomial, "compare")
+        command=lambda: plot_generator(polynomial)
         if lbl_info.cget("text") == "Poprawnie wczytano dane"
         else None,
     )

@@ -91,21 +91,23 @@ class Trygonometric:
         return self.replace_small_imag_with_real(aj_coofs, bj_coofs)
 
     def show_interpolation_trygonometric_polynomial(self) -> str:
+        """Tworzy tekstową reprezentację trygonometrycznego wielomianu interpolacyjnego."""
         polynomial = f"{self.aj_coofs[0]} / 2 "
         for i in range(1, len(self.aj_coofs)):
             polynomial += f"+ {self.aj_coofs[i]} * cos({i} * x) + {self.bj_coofs[i]} * sin({i} * x) "
         return polynomial
 
-    def eval_sin_cos_representation(self, t, A, B):
-        return A[0] / 2 + sum(
-            A[n] * np.cos(n * t) + B[n] * np.sin(n * t) for n in range(1, len(A))
+    def eval_sin_cos_representation(self, x):
+        """Wylicza kolejną wartość wilomianu interpolacyjnego."""
+        return self.aj_coofs[0] / 2 + sum(
+            self.aj_coofs[n] * np.cos(n * x) + self.bj_coofs[n] * np.sin(n * x)
+            for n in range(1, len(self.aj_coofs))
         )
 
-    def compare_fun_and_interpolation_plot(self, a, b):
+    def interpolation_plot(self, a: float, b: float) -> None:
+        """Generuje wykres trygonometrycznego wielomianu interpolacyjnego."""
         x = np.linspace(a, b, 10000)
-        y = [
-            self.eval_sin_cos_representation(i, self.aj_coofs, self.bj_coofs) for i in x
-        ]
+        y = [self.eval_sin_cos_representation(i) for i in x]
         plt.suptitle("Wykres funkcji interpolacyjnej")
         plt.grid(True)
         plt.plot(x, y)
