@@ -1,4 +1,4 @@
-from nifs3 import Nifs3
+from .nifs3 import Nifs3
 import tkinter as tk
 from tkinter import Text
 from tkinter.constants import BOTTOM, INSERT, LEFT, RIGHT

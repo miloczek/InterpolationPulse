@@ -5,7 +5,7 @@ from tkinter.constants import BOTTOM, INSERT, LEFT, RIGHT
 from numpy.lib.twodim_base import tri
 from utils import clear_win
 import main_interface
-from trygonometric import Trygonometric
+from .trygonometric import Trygonometric
 
 
 def prepare_interval_values(

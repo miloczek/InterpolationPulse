@@ -1,76 +1,33 @@
 import tkinter as tk
-from tkinter import Text, Widget
-from tkinter.constants import BOTTOM, INSERT, LEFT, NO, NONE, RIGHT, END
+from tkinter import Text
+from tkinter.constants import BOTTOM, END, INSERT, LEFT, NO, NONE, RIGHT
 
+
+from .lagrange import Lagrange
 from utils import clear_win, chebyshev_nodes
 import main_interface
-from hermite import Hermite
-
-
-def show_generated_polynomial(poly: Hermite) -> None:
-    """Wypisuje na ekran wygenerowany wielomian."""
-    side_window = tk.Tk()
-    side_window.title("Generated polynomial")
-    side_window.geometry("600x400")
-    text = Text(side_window)
-    text.insert(INSERT, poly.hermite_polynomial)
-    text.pack()
-
-
-def show_table_of_diffs(poly: Hermite) -> None:
-    side_window = tk.Tk()
-    side_window.title("Generated table of diffs")
-    side_window.geometry("1024x800")
-    text = Text(side_window, width=1024, height=800)
-    str_of_diff_table = ""
-    for line in poly.table_of_diffs:
-        str_of_diff_table += f"{line}\n"
-    text.insert(INSERT, str_of_diff_table)
-    text.pack()
-
-
-def create_hermite_polynomial(
-    lbl_info: tk.Label, x: str, f: str, precision: str
-) -> None:
-    """Na podstawie wczytanych węzłów i funkcji, tworzy wielomian Hermite'a."""
-    if x == "" or f == "":
-        lbl_info.config(text="Nie wprowadzono danych", fg="red")
-        return
-    else:
-        try:
-            global polynomial
-            polynomial = Hermite(x, f, precision)
-            lbl_info.config(text="Poprawnie wczytano dane", fg="green")
-            show_generated_polynomial(polynomial)
-        except ZeroDivisionError:
-            lbl_info.config(text="Funkcja niemożliwa do zinterpolowania", fg="red")
-            return
-        except Exception as e:
-            lbl_info.config(text="Błędne dane", fg="red")
-            print(e)
-            return
 
 
 def prepare_interval_values(
-    entry: tk.Entry, info: tk.Label, poly: Hermite, mode: str
+    entry: tk.Entry, info: tk.Label, poly: Lagrange, mode: str
 ) -> None:
     """Wczytuje wartości brzegowe przedziału z pola tekstowego i
     uruchamia wizualizację funkcji"""
     try:
         a, b = tuple(entry.get().split(","))
-        info.config(text="Poprawnie wygnerowano wykres", fg="green")
         if mode == "normal":
             poly.plot_basic_function_in_linear_area(float(a), float(b))
-        elif mode == "hermite":
+        elif mode == "lagrange":
             poly.plot_lagrange_in_linear_area(float(a), float(b))
         else:
             poly.plot_compare_plot_in_linear_area(float(a), float(b))
+        info.config(text="Poprawnie wygnerowano wykres", fg="green")
     except Exception as e:
         info.config(text="Wprowadź dobry przedział", fg="red")
         print(e)
 
 
-def plot_generator(poly: Hermite, mode: str) -> None:
+def plot_generator(poly: Lagrange, mode: str) -> None:
     """Funkcja wczytująca zakres i generująca wykres."""
     side_window = tk.Tk()
     side_window.title("Plot generator")
@@ -100,6 +57,36 @@ def plot_generator(poly: Hermite, mode: str) -> None:
     side_window.mainloop()
 
 
+def show_generated_polynomial(poly: Lagrange) -> None:
+    """Wypisuje na ekran wygenerowany wielomian."""
+    side_window = tk.Tk()
+    side_window.title("Generated polynomial")
+    side_window.geometry("600x400")
+    text = Text(side_window)
+    text.insert(INSERT, poly.lagrange_polynomial)
+    text.pack()
+
+
+def create_lagrange_polynomial(
+    lbl_info: tk.Label, x: str, f: str, precision: str
+) -> None:
+    """Na podstawie wczytanych węzłów i funkcji, tworzy wielomian Lagrange'a."""
+
+    if x == "" or f == "":
+        lbl_info.config(text="Nie wprowadzono danych", fg="red")
+        return
+    else:
+        try:
+            global polynomial
+            polynomial = Lagrange(x, f, precision)
+            lbl_info.config(text="Poprawnie wczytano dane", fg="green")
+            show_generated_polynomial(polynomial)
+        except Exception as e:
+            lbl_info.config(text="Błędne dane", fg="red")
+            print(e)
+            return
+
+
 def generate_chebyshev_nodes(lbl_info: tk.Label, etr_box_x: tk.Entry, n: str) -> None:
     """Generuje węzły Czebyszewa na podstawie podanej ilości."""
     try:
@@ -116,8 +103,8 @@ def generate_chebyshev_nodes(lbl_info: tk.Label, etr_box_x: tk.Entry, n: str) ->
         return
 
 
-def hermite_interpolation(window: tk.Tk) -> None:
-    """Główna funkcja przygotowująca wielomiany Hermite'a. Ustawia poprawnie
+def lagrange_interpolation(window: tk.Tk) -> None:
+    """Główna funkcja przygotowująca wielomiany Lagrange'a. Ustawia poprawnie
     interfejsy i uruchamia funkcje pomocnicze."""
     clear_win(window)
     global polynomial
@@ -125,7 +112,7 @@ def hermite_interpolation(window: tk.Tk) -> None:
 
     lbl_instruction = tk.Label(
         window,
-        text="Interpolacja Hermite'a",
+        text="Interpolacja Lagrange'a",
         font=("Helvetica", "24"),
     )
 
@@ -159,21 +146,12 @@ def hermite_interpolation(window: tk.Tk) -> None:
         window,
         text="Wczytaj dane i pokaż wielomian",
         font=("Helvetica", "16"),
-        command=lambda: create_hermite_polynomial(
+        command=lambda: create_lagrange_polynomial(
             lbl_info,
             str(etr_box_x.get()),
             str(etr_box_f.get()),
             str(etr_box_prec.get()),
         ),
-    )
-
-    btn_diffs_table = tk.Button(
-        window,
-        text="Wygeneruj tablicę ilorazów różnicowych",
-        font=("Helvetica", "16"),
-        command=lambda: show_table_of_diffs(polynomial)
-        if lbl_info.cget("text") == "Poprawnie wczytano dane"
-        else None,
     )
 
     btn_compare_plots = tk.Button(
@@ -228,7 +206,7 @@ def hermite_interpolation(window: tk.Tk) -> None:
         window,
         text="Wygeneruj wykres wielomianu interpolacyjnego",
         font=("Helvetica", "16"),
-        command=lambda: plot_generator(polynomial, "hermite")
+        command=lambda: plot_generator(polynomial, "lagrange")
         if lbl_info.cget("text") == "Poprawnie wczytano dane"
         else None,
     )
@@ -242,7 +220,6 @@ def hermite_interpolation(window: tk.Tk) -> None:
     etr_box_prec.pack()
     lbl_info.pack()
     btn_load.pack()
-    btn_diffs_table.pack()
     btn_compare_plots.pack()
     lbl_instr_chebyshev.pack()
     etr_box_chebyshev.pack()

@@ -7,6 +7,7 @@ from utils import clear_win, chebyshev_plot
 
 
 def generate_chebyshev_plots(lbl_info: tk.Label, a_b: tk.Entry, n: tk.Entry) -> None:
+    """Przygotowuje przedziały, zajmuje się przechwytywaniem błędów i wywołuje funkcję generującą wykresy."""
     if a_b.get() == "" or n.get() == "":
         lbl_info.config(text="Nie wprowadzono danych", fg="red")
         return

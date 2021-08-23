@@ -1,14 +1,13 @@
-from hermite_interface import hermite_interpolation
 import tkinter as tk
 from tkinter.constants import BOTTOM
 
 from utils import clear_win
-from lagrange_inteface import lagrange_interpolation
-from polynomial_interface import polynomial_parse
-from nifs3_interface import nifs3_interpolation
-from hermite_interface import hermite_interpolation
-from trygonometric_interface import trygonometric_interpolation
-from chebyshev_interface import chebyshev_polynomials
+from lagrange.lagrange_inteface import lagrange_interpolation
+from polynomial.polynomial_interface import polynomial_parse
+from nifs3.nifs3_interface import nifs3_interpolation
+from hermite.hermite_interface import hermite_interpolation
+from trygonometric.trygonometric_interface import trygonometric_interpolation
+from chebyshev.chebyshev_interface import chebyshev_polynomials
 
 
 def main(window: tk.Tk) -> None:

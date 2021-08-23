@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import Text
 from tkinter.constants import BOTTOM, INSERT
 
-from polynomial import Polynomial
+from .polynomial import Polynomial
 from utils import clear_win
 import main_interface
 
