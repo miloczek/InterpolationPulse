@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import Label, constants
 from tkinter.constants import TRUE
 from typing import Any, List, Tuple, Union
+import random
 
 
 import numpy
@@ -11,6 +12,7 @@ from matplotlib import pyplot as plt
 
 
 SMALL_FLOAT = numpy.finfo(float).eps
+PI = math.pi
 
 
 def clear_win(window: tk.Tk) -> None:
@@ -257,17 +259,33 @@ def compare_fun_and_interpolation_plot(
     plt.show()
 
 
-def chebyshev_nodes(n: int) -> List[float]:
+def chebyshev_nodes(n: int, a: float, b: float) -> List[float]:
     """Generuje węzły na podstawie miejsc zerowych wielomianów Czebyszewa."""
-    xs = [1 for i in range(n + 1)]
-    return list(numpy.polynomial.chebyshev.chebroots(tuple(xs)))
+    delta1 = (b - a) / 2
+    delta2 = (b + a) / 2
+    f = [math.cos((i + 0.5) * PI / n) * delta1 + delta2 for i in range(1, n + 1)]
+    return sorted(f)
 
 
-def chebyshev_plot(a: float, b: float, n: int) -> None:
+def equidistant_nodes(n: int, a: float, b: float) -> List[float]:
+    """Generuje równoodległe węzły."""
+    xs = numpy.linspace(a, b, num=n)
+    return list(xs)
+
+
+def random_nodes(n: int, a: float, b: float) -> List[float]:
+    """Generuje losowe węzły."""
+    xs = [random.uniform(a, b) for i in range(n)]
+    return sorted(xs)
+
+
+def chebyshev_plot(a: float, b: float, n1: int, n2: int) -> None:
     """Generuje wykresy kolejnych węzłów Czebyszewa."""
     x = numpy.linspace(a, b, 10000)
-    for i in range(n):
-        axis = plt.plot(x, Chebyshev.basis(i)(x), lw=2, label=f"$T_{i}$")
+    if n1 < 0 or n2 < 0:
+        raise ValueError
+    for i in range(n1, n2 + 1):
+        axis = plt.plot(x, Chebyshev.basis(i)(x), lw=2, label=f"$T_{{{i}}}$")
     plt.grid(True)
     plt.legend(loc="upper left")
     plt.show()

@@ -14,7 +14,8 @@ def generate_chebyshev_plots(lbl_info: tk.Label, a_b: tk.Entry, n: tk.Entry) -> 
     else:
         try:
             a, b = tuple(a_b.get().split(","))
-            chebyshev_plot(float(a), float(b), int(n.get()))
+            n1, n2 = tuple(n.get().split(","))
+            chebyshev_plot(float(a), float(b), int(n1), int(n2))
             lbl_info.config(text="Poprawnie wygnerowano wykres", fg="green")
         except Exception as e:
             lbl_info.config(text="Błędne dane", fg="red")
@@ -35,16 +36,16 @@ def chebyshev_polynomials(window: tk.Tk) -> None:
 
     lbl_instr_n = tk.Label(
         window,
-        text="Podaj ilość wielomianów: ",
+        text="Podaj przedział stopni wielomianów w postaci [a, b]: ",
         font=("Helvetica", "16"),
     )
 
-    etr_box_n = tk.Entry(window, width=3)
+    etr_box_n = tk.Entry(window, width=100)
 
     lbl_instr_a_b = tk.Label(
         window,
         text="Podaj zakres w postaci [a, b]: ",
-        font=("Helvetica", "24"),
+        font=("Helvetica", "16"),
     )
 
     etr_box_a_b = tk.Entry(window, width=100)

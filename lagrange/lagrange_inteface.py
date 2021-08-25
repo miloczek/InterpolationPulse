@@ -1,10 +1,11 @@
 import tkinter as tk
+from tkinter import ttk
 from tkinter import Text
 from tkinter.constants import BOTTOM, END, INSERT, LEFT, NO, NONE, RIGHT
 
 
 from .lagrange import Lagrange
-from utils import clear_win, chebyshev_nodes
+from utils import clear_win, chebyshev_nodes, random_nodes, equidistant_nodes
 import main_interface
 
 
@@ -87,13 +88,22 @@ def create_lagrange_polynomial(
             return
 
 
-def generate_chebyshev_nodes(lbl_info: tk.Label, etr_box_x: tk.Entry, n: str) -> None:
+def generate_nodes(
+    lbl_info: tk.Label, etr_box_x: tk.Entry, n: str, a_b_str: str, type: str
+) -> None:
     """Generuje węzły Czebyszewa na podstawie podanej ilości."""
     try:
         n = int(n)
+        a, b = tuple(a_b_str.split(","))
         nodes_str = ""
         lbl_info.config(text="", fg="green")
-        for node in chebyshev_nodes(n):
+        if type == "węzły równoodległe":
+            nodes_tab = equidistant_nodes(n, float(a), float(b))
+        elif type == "węzły losowe":
+            nodes_tab = random_nodes(n, float(a), float(b))
+        elif type == "węzły Czebyszewa":
+            nodes_tab = chebyshev_nodes(n, float(a), float(b))
+        for node in nodes_tab:
             nodes_str += f"{node}, "
         etr_box_x.delete(0, END)
         etr_box_x.insert(0, nodes_str)
@@ -163,22 +173,50 @@ def lagrange_interpolation(window: tk.Tk) -> None:
         else None,
     )
 
-    lbl_instr_chebyshev = tk.Label(
+    lbl_instr_nodes_type = tk.Label(
         window,
-        text="Podaj ilość wielomianów Czebyszewa, z których chcesz uzyskać węzły: ",
+        text="Podaj rodzaj węzłów: ",
         font=("Helvetica", "16"),
     )
 
-    etr_box_chebyshev = tk.Entry(window, width=3)
+    selected_type = tk.StringVar()
+
+    cb_nodes_type = ttk.Combobox(window, textvariable=selected_type)
+    cb_nodes_type["values"] = ("węzły równoodległe", "węzły losowe", "węzły Czebyszewa")
+    cb_nodes_type["state"] = "readonly"
+
+    lbl_instr_nodes_n = tk.Label(
+        window,
+        text="Podaj ilość węzłów: ",
+        font=("Helvetica", "16"),
+    )
+
+    etr_box_nodes_n = tk.Entry(window, width=3)
+
+    lbl_instr_nodes_interval = tk.Label(
+        window,
+        text="Podaj przedział węzłów [a,b]: ",
+        font=("Helvetica", "16"),
+    )
+
+    etr_box_nodes_interval = tk.Entry(window, width=100)
 
     btn_make_chebyshev_nodes = tk.Button(
         window,
-        text="Wygeneruj węzły Czebyszewa",
+        text="Wygeneruj węzły",
         font=("Helvetica", "16"),
-        command=lambda: generate_chebyshev_nodes(
-            lbl_info, etr_box_x, str(etr_box_chebyshev.get())
+        command=lambda: generate_nodes(
+            lbl_info,
+            etr_box_x,
+            str(etr_box_nodes_n.get()),
+            str(etr_box_nodes_interval.get()),
+            str(cb_nodes_type.get()),
         )
-        if etr_box_chebyshev.get() != ""
+        if (
+            etr_box_nodes_n.get() != ""
+            and etr_box_nodes_interval.get() != ""
+            and cb_nodes_type.get() != ""
+        )
         else None,
     )
 
@@ -221,8 +259,12 @@ def lagrange_interpolation(window: tk.Tk) -> None:
     lbl_info.pack()
     btn_load.pack()
     btn_compare_plots.pack()
-    lbl_instr_chebyshev.pack()
-    etr_box_chebyshev.pack()
+    lbl_instr_nodes_n.pack()
+    etr_box_nodes_n.pack()
+    lbl_instr_nodes_interval.pack()
+    etr_box_nodes_interval.pack()
+    lbl_instr_nodes_type.pack()
+    cb_nodes_type.pack()
     btn_make_chebyshev_nodes.pack()
     btn_make_interpolation_plot.pack(side=RIGHT)
     btn_make_function_plot.pack(side=LEFT)
