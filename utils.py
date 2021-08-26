@@ -139,6 +139,7 @@ def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
     """Parsuje i oblicza ostateczną wartość funkcji."""
     proper_f = ""
     negative_power_or_div = False
+    f = f.replace(" ", "")
     for index, char in enumerate(f):
         if char == "p":
             proper_f += "numpy.pi"
@@ -190,6 +191,7 @@ def compute_y_with_prec(x: List[float], f: str, precision: int) -> Tuple[List[fl
     """Parsuje i oblicza ostateczną wartość funkcji z wybraną precyzją."""
     proper_f = ""
     negative_power_or_div = False
+    f = f.replace(" ", "")
     for index, char in enumerate(f):
         if char == "p":
             proper_f += "numpy.pi"
@@ -247,15 +249,19 @@ def basic_fun_plot(x: Union[Tuple[Any, Union[Any, float]], Any], y: float) -> No
 
 
 def compare_fun_and_interpolation_plot(
-    x: Union[Tuple[Any, Union[Any, float]], Any], y1: float, y2: float
+    x: Union[Tuple[Any, Union[Any, float]], Any],
+    y1: List[float],
+    y2: List[float],
+    delta_y: List[float],
 ) -> None:
     """Generuje wykres porównawczy funkcji wejściowej i wielomianu interpolacyjnego"""
     fig, axs = plt.subplots(2)
     for ax in fig.axes:
         ax.grid(True)
-    fig.suptitle("Wyjściowa funkcja (góra), wielomian interpolacyjny (dół)")
+    fig.suptitle("Wykres porównawczy (góra), wykres błędu (dół)")
     axs[0].plot(x, y1)
-    axs[1].plot(x, y2)
+    axs[0].plot(x, y2)
+    axs[1].plot(x, delta_y, color="red")
     plt.show()
 
 

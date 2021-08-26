@@ -1,7 +1,8 @@
+from operator import le
 import re
 from tkinter.constants import NO, NONE
 import utils
-from typing import List
+from typing import List, Union
 
 
 class Polynomial:
@@ -52,6 +53,7 @@ class Polynomial:
                     result_b.append(char)
             all_x = ""
             counter = 0
+            self.check_correctness(result_x)
             for elem in result_x:
                 current_elem = 0
                 for char in elem:
@@ -67,6 +69,15 @@ class Polynomial:
             b = [float(elem) for elem in result_b]
             self.newton_coefficients = (x, b)
             self.change_to_natural_form()
+
+    def check_correctness(self, xs: List[str]) -> Union[bool, TypeError]:
+        """Sprawdza poprawność postaci Newtona."""
+        for i in range(len(xs)):
+            current = xs[0][:-1]
+            for j in range(i, len(xs)):
+                if current not in xs[j]:
+                    raise TypeError
+        return True
 
     def check_degree(self) -> int:
         """Zwraca stopień wielomianu."""
@@ -120,7 +131,7 @@ class Polynomial:
         return result_output[:-2]
 
     def change_to_natural_form(self) -> None:
-        """Zmienia wielomian postaci Newtona do formy naturalnej."""
+        """Zmienia wielomian postaci Newtona do formy naturalnej. Algorytm z Jankowskich cz.1 str.43"""
         x, b = self.newton_coefficients
         n = len(b) - 1
         a = [0 for i in range(n + 1)]
