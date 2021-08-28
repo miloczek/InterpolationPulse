@@ -256,12 +256,14 @@ def compare_fun_and_interpolation_plot(
 ) -> None:
     """Generuje wykres porównawczy funkcji wejściowej i wielomianu interpolacyjnego"""
     fig, axs = plt.subplots(2)
+
+    fig.suptitle("Wykres porównawczy (góra), wykres błędu (dół)")
+    axs[0].plot(x, y1, label="f. wyjściowa")
+    axs[0].plot(x, y2, label="w. interpolacyjny")
+    axs[1].plot(x, delta_y, color="red", label="f. błędu")
     for ax in fig.axes:
         ax.grid(True)
-    fig.suptitle("Wykres porównawczy (góra), wykres błędu (dół)")
-    axs[0].plot(x, y1)
-    axs[0].plot(x, y2)
-    axs[1].plot(x, delta_y, color="red")
+        ax.legend(loc="upper left")
     plt.show()
 
 
