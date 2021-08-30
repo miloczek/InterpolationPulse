@@ -91,7 +91,7 @@ def create_lagrange_polynomial(
 def generate_nodes(
     lbl_info: tk.Label, etr_box_x: tk.Entry, n: str, a_b_str: str, type: str
 ) -> None:
-    """Generuje węzły Czebyszewa na podstawie podanej ilości."""
+    """Generuje węzły interpolacji na podstawie podanej ilości."""
     try:
         n = int(n)
         a, b = tuple(a_b_str.split(","))

@@ -10,6 +10,7 @@ class Lagrange:
         if precision == "":
             self.prec = False
             self.x = [float(xi) for xi in x.split(",") if xi != " " and xi != ""]
+            self.x.sort()
             self.y, self.f = utils.compute_y(self.x, function_string)
             self.lagrange_polynomial = self.make_interpolation_str_polynomial()
         else:
@@ -19,6 +20,7 @@ class Lagrange:
                 for xi in x.split(",")
                 if xi != " " and xi != ""
             ]
+            self.x.sort()
             self.y, self.f = utils.compute_y_with_prec(
                 self.x, function_string, self.prec
             )
