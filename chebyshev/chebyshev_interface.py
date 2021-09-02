@@ -18,7 +18,7 @@ def generate_chebyshev_plots(lbl_info: tk.Label, a_b: tk.Entry, n: tk.Entry) -> 
             chebyshev_plot(float(a), float(b), int(n1), int(n2))
             lbl_info.config(text="Poprawnie wygnerowano wykres", fg="green")
         except Exception as e:
-            lbl_info.config(text="Błędne dane", fg="red")
+            lbl_info.config(text="Błędne dane, przy węzłach losowych może być konieczne ponowne wygenerowanie", fg="red")
             print(e)
             return
 

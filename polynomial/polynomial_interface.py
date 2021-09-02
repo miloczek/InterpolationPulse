@@ -35,7 +35,7 @@ def create_natural_newton_polynomial(
             else:
                 polynomial.plot_newton_form(float(a), float(b))
         except Exception as e:
-            lbl_info.config(text="Błędne dane", fg="red")
+            lbl_info.config(text="Błędne dane, przy węzłach losowych może być konieczne ponowne wygenerowanie", fg="red")
             print(e)
             return
 

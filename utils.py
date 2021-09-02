@@ -7,6 +7,7 @@ import random
 
 
 import numpy
+from numpy.core.fromnumeric import var
 from numpy.polynomial import Chebyshev
 from matplotlib import pyplot as plt
 
@@ -253,6 +254,9 @@ def compare_fun_and_interpolation_plot(
     y1: List[float],
     y2: List[float],
     delta_y: List[float],
+    var_nodes: bool,
+    nodes_x,
+    nodes_y
 ) -> None:
     """Generuje wykres porównawczy funkcji wejściowej i wielomianu interpolacyjnego"""
     fig, axs = plt.subplots(2)
@@ -260,6 +264,8 @@ def compare_fun_and_interpolation_plot(
     fig.suptitle("Wykres porównawczy (góra), wykres błędu (dół)")
     axs[0].plot(x, y1, label="f. wyjściowa")
     axs[0].plot(x, y2, label="w. interpolacyjny")
+    if var_nodes:
+        axs[0].scatter(nodes_x, nodes_y, c="black")
     axs[1].plot(x, delta_y, color="red", label="f. błędu")
     for ax in fig.axes:
         ax.grid(True)

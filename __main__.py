@@ -4,7 +4,7 @@ from main_interface import main
 
 window = tk.Tk()
 window.title("Interpolation Pulse")
-window.geometry("1000x800")
+window.geometry("1200x800")
 
 
 if __name__ == "__main__":

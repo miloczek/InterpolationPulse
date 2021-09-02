@@ -46,7 +46,7 @@ def create_hermite_polynomial(
             lbl_info.config(text="Funkcja niemożliwa do zinterpolowania", fg="red")
             return
         except Exception as e:
-            lbl_info.config(text="Błędne dane", fg="red")
+            lbl_info.config(text="Błędne dane, przy węzłach losowych może być konieczne ponowne wygenerowanie", fg="red")
             print(e)
             return
 

@@ -1,7 +1,7 @@
 from numpy.lib.polynomial import polyint
 from .nifs3 import Nifs3
 import tkinter as tk
-from tkinter import ttk
+from tkinter import IntVar, ttk
 from tkinter import Text
 from tkinter.constants import BOTTOM, INSERT, LEFT, RIGHT, END
 
@@ -11,25 +11,20 @@ from typing import List
 
 
 def prepare_interval_values(
-    entry: tk.Entry, info: tk.Label, poly: Nifs3, mode: str
+    entry: tk.Entry, info: tk.Label, poly: Nifs3, var_nodes: IntVar
 ) -> None:
     """Wczytuje wartości brzegowe przedziału z pola tekstowego i
     uruchamia wizualizację funkcji"""
     try:
         a, b = tuple(entry.get().split(","))
         info.config(text="Poprawnie wygnerowano wykres", fg="green")
-        if mode == "normal":
-            poly.plot_basic_function_in_linear_area(float(a), float(b))
-        elif mode == "nifs3":
-            poly.plot_nifs3_in_linear_area3()
-        else:
-            poly.plot_compare_plot_in_linear_area3(float(a), float(b))
+        poly.plot_basic_function_in_linear_area(float(a), float(b), var_nodes)
     except Exception as e:
         info.config(text="Wprowadź dobry przedział", fg="red")
         print(e)
 
 
-def plot_generator(poly: Nifs3, mode: str) -> None:
+def plot_generator(poly: Nifs3, var_nodes: IntVar) -> None:
     """Funkcja wczytująca zakres i generująca wykres."""
     side_window = tk.Tk()
     side_window.title("Plot generator")
@@ -49,7 +44,7 @@ def plot_generator(poly: Nifs3, mode: str) -> None:
         side_window,
         text="Generuj",
         font=("Helvetica", "16"),
-        command=lambda: prepare_interval_values(etr_box_a_b, lbl_info, poly, mode),
+        command=lambda: prepare_interval_values(etr_box_a_b, lbl_info, poly, var_nodes),
     )
 
     lbl_instruction.pack()
@@ -177,7 +172,7 @@ def nifs3_interpolation(window: tk.Tk) -> None:
         window,
         text="Wygeneruj wykres porównawczy",
         font=("Helvetica", "16"),
-        command=lambda: plot_generator(polynomial, "compare")
+        command=lambda: polynomial.plot_compare_plot_in_linear_area(var_nodes)
         if lbl_info.cget("text") == "Poprawnie wczytano dane"
         else None,
     )
@@ -187,7 +182,7 @@ def nifs3_interpolation(window: tk.Tk) -> None:
         text="Podaj rodzaj węzłów: ",
         font=("Helvetica", "16"),
     )
-
+    
     selected_type = tk.StringVar()
 
     cb_nodes_type = ttk.Combobox(window, textvariable=selected_type)
@@ -244,7 +239,7 @@ def nifs3_interpolation(window: tk.Tk) -> None:
         window,
         text="Wygeneruj wykres wyjściowej funkcji",
         font=("Helvetica", "16"),
-        command=lambda: plot_generator(polynomial, "normal")
+        command=lambda: plot_generator(polynomial, var_nodes)
         if lbl_info.cget("text") == "Poprawnie wczytano dane"
         else None,
     )
@@ -253,9 +248,19 @@ def nifs3_interpolation(window: tk.Tk) -> None:
         window,
         text="Wygeneruj wykres wielomianu interpolacyjnego",
         font=("Helvetica", "16"),
-        command=lambda: polynomial.plot_nifs3_in_linear_area()
+        command=lambda: polynomial.plot_nifs3_in_linear_area(var_nodes)
         if lbl_info.cget("text") == "Poprawnie wczytano dane"
         else None,
+    )
+
+    var_nodes = tk.IntVar()
+    ck_bx_nodes = tk.Checkbutton(
+        window,
+        text="Pokaż węzły interpolacji na wykresie",
+        font=("Helvetica", "16"),
+        variable=var_nodes,
+        onvalue=1,
+        offvalue=0,
     )
 
     lbl_instruction.pack()
@@ -275,6 +280,7 @@ def nifs3_interpolation(window: tk.Tk) -> None:
     lbl_instr_nodes_type.pack()
     cb_nodes_type.pack()
     btn_make_chebyshev_nodes.pack()
+    ck_bx_nodes.pack()
     btn_make_interpolation_plot.pack(side=RIGHT)
     btn_make_function_plot.pack(side=LEFT)
     btn_exit.pack(side=BOTTOM)
