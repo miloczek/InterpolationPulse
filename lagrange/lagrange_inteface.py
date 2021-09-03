@@ -1,7 +1,9 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import IntVar, ttk
 from tkinter import Text
 from tkinter.constants import BOTTOM, END, INSERT, LEFT, NO, NONE, RIGHT
+
+from numpy.core.fromnumeric import var
 
 
 from .lagrange import Lagrange
@@ -10,25 +12,25 @@ import main_interface
 
 
 def prepare_interval_values(
-    entry: tk.Entry, info: tk.Label, poly: Lagrange, mode: str
+    entry: tk.Entry, info: tk.Label, poly: Lagrange, mode: str, var_nodes: IntVar
 ) -> None:
     """Wczytuje wartości brzegowe przedziału z pola tekstowego i
     uruchamia wizualizację funkcji"""
     try:
         a, b = tuple(entry.get().split(","))
         if mode == "normal":
-            poly.plot_basic_function_in_linear_area(float(a), float(b))
+            poly.plot_basic_function_in_linear_area(float(a), float(b), var_nodes)
         elif mode == "lagrange":
-            poly.plot_lagrange_in_linear_area(float(a), float(b))
+            poly.plot_lagrange_in_linear_area(float(a), float(b), var_nodes)
         else:
-            poly.plot_compare_plot_in_linear_area(float(a), float(b))
+            poly.plot_compare_plot_in_linear_area(float(a), float(b), var_nodes)
         info.config(text="Poprawnie wygnerowano wykres", fg="green")
     except Exception as e:
         info.config(text="Wprowadź dobry przedział", fg="red")
         print(e)
 
 
-def plot_generator(poly: Lagrange, mode: str) -> None:
+def plot_generator(poly: Lagrange, mode: str, var_nodes: IntVar) -> None:
     """Funkcja wczytująca zakres i generująca wykres."""
     side_window = tk.Tk()
     side_window.title("Plot generator")
@@ -48,7 +50,9 @@ def plot_generator(poly: Lagrange, mode: str) -> None:
         side_window,
         text="Generuj",
         font=("Helvetica", "16"),
-        command=lambda: prepare_interval_values(etr_box_a_b, lbl_info, poly, mode),
+        command=lambda: prepare_interval_values(
+            etr_box_a_b, lbl_info, poly, mode, var_nodes
+        ),
     )
 
     lbl_instruction.pack()
@@ -62,8 +66,8 @@ def show_generated_polynomial(poly: Lagrange) -> None:
     """Wypisuje na ekran wygenerowany wielomian."""
     side_window = tk.Tk()
     side_window.title("Generated polynomial")
-    side_window.geometry("600x400")
-    text = Text(side_window)
+    side_window.geometry("1200x800")
+    text = Text(side_window, height=800, width=1200)
     text.insert(INSERT, poly.lagrange_polynomial)
     text.pack()
 
@@ -168,7 +172,7 @@ def lagrange_interpolation(window: tk.Tk) -> None:
         window,
         text="Wygeneruj wykres porównawczy",
         font=("Helvetica", "16"),
-        command=lambda: plot_generator(polynomial, "compare")
+        command=lambda: plot_generator(polynomial, "compare", var_nodes)
         if lbl_info.cget("text") == "Poprawnie wczytano dane"
         else None,
     )
@@ -235,7 +239,7 @@ def lagrange_interpolation(window: tk.Tk) -> None:
         window,
         text="Wygeneruj wykres wyjściowej funkcji",
         font=("Helvetica", "16"),
-        command=lambda: plot_generator(polynomial, "normal")
+        command=lambda: plot_generator(polynomial, "normal", var_nodes)
         if lbl_info.cget("text") == "Poprawnie wczytano dane"
         else None,
     )
@@ -244,9 +248,19 @@ def lagrange_interpolation(window: tk.Tk) -> None:
         window,
         text="Wygeneruj wykres wielomianu interpolacyjnego",
         font=("Helvetica", "16"),
-        command=lambda: plot_generator(polynomial, "lagrange")
+        command=lambda: plot_generator(polynomial, "lagrange", var_nodes)
         if lbl_info.cget("text") == "Poprawnie wczytano dane"
         else None,
+    )
+
+    var_nodes = tk.IntVar()
+    ck_bx_nodes = tk.Checkbutton(
+        window,
+        text="Pokaż węzły interpolacji na wykresie",
+        font=("Helvetica", "16"),
+        variable=var_nodes,
+        onvalue=1,
+        offvalue=0,
     )
 
     lbl_instruction.pack()
@@ -266,6 +280,7 @@ def lagrange_interpolation(window: tk.Tk) -> None:
     lbl_instr_nodes_type.pack()
     cb_nodes_type.pack()
     btn_make_chebyshev_nodes.pack()
+    ck_bx_nodes.pack()
     btn_make_interpolation_plot.pack(side=RIGHT)
     btn_make_function_plot.pack(side=LEFT)
     btn_exit.pack(side=BOTTOM)

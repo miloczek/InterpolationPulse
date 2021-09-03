@@ -1,5 +1,8 @@
+from typing_extensions import IntVar
 import numpy
+from numpy.core.fromnumeric import var
 import utils
+import matplotlib.pyplot as plt
 
 
 class Lagrange:
@@ -26,12 +29,18 @@ class Lagrange:
             )
             self.lagrange_polynomial = self.make_interpolation_str_polynomial()
 
-    def plot_basic_function_in_linear_area(self, a: float, b: float) -> None:
+    def plot_basic_function_in_linear_area(
+        self, a: float, b: float, var_nodes: IntVar
+    ) -> None:
         """Generuje wykres funkcji wejściowej."""
         x = numpy.linspace(a, b, 10000)
+        if var_nodes.get():
+            plt.scatter(self.x, self.y, c="black")
         utils.basic_fun_plot(x, utils.eval_fun(self.f, x))
 
-    def plot_lagrange_in_linear_area(self, a: float, b: float) -> None:
+    def plot_lagrange_in_linear_area(
+        self, a: float, b: float, var_nodes: IntVar
+    ) -> None:
         """Generuje wykres obliczonego wielomianu Lagange'a."""
         x = numpy.linspace(a, b, 10000)
         if self.prec:
@@ -41,9 +50,13 @@ class Lagrange:
             ]
         else:
             y = [self.eval_interpolation_polynomial_y_value(i) for i in x]
+        if var_nodes.get():
+            plt.scatter(self.x, self.y, c="black")
         utils.basic_fun_plot(x, y)
 
-    def plot_compare_plot_in_linear_area(self, a: float, b: float) -> None:
+    def plot_compare_plot_in_linear_area(
+        self, a: float, b: float, var_nodes: IntVar
+    ) -> None:
         """Generuje wykres porównawczy funkcji wejściowej i wielomianu Lagrange'a."""
         x = numpy.linspace(a, b, 10000)
         if self.prec:
@@ -54,8 +67,9 @@ class Lagrange:
         else:
             y = [self.eval_interpolation_polynomial_y_value(i) for i in x]
         delta_y = [abs(y[i] - utils.eval_fun(self.f, xi)) for i, xi in enumerate(x)]
+        var_nodes = var_nodes.get()
         utils.compare_fun_and_interpolation_plot(
-            x, utils.eval_fun(self.f, x), y, delta_y
+            x, utils.eval_fun(self.f, x), y, delta_y, var_nodes, self.x, self.y
         )
 
     def make_interpolation_str_polynomial(self) -> str:
