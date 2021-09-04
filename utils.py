@@ -112,28 +112,48 @@ def eval_fun(f: str, x: Union[float, numpy.ndarray]) -> float:
     return eval(f)
 
 
-def eval_derivative_fun(f: str, x: float, delta: float = 0.001) -> float:
-    """Oblicza wartość pochodnej funkcji dla wybranej delty."""
-    return (eval_fun(f, x + delta) - eval_fun(f, x)) / delta
-
-
 def eval_fun_with_prec(f: str, x: float, precision: int) -> float:
     """Oblicza funkcję f na podstawie zaaplikowanego x z wybraną precyzją."""
     return round(eval(f), precision)
 
 
-def eval_derivative_fun_with_prec(
-    f: str, x: float, precision: int, delta: float = 0.001
-) -> float:
-    """Oblicza wartość pochodnej funkcji dla wybranej delty z precyzją."""
-    return round(
-        (
-            eval_fun_with_prec(f, x + delta, precision)
-            - eval_fun_with_prec(f, x, precision)
-        )
-        / delta,
-        precision,
-    )
+def add_coma_to_str(xs: str) -> str:
+    xs = xs if xs.endswith(",") else xs + ","
+    return xs
+
+
+def check_if_nodes_and_values_are_equal(x: str, y: str, y_prim: str) -> bool:
+    x, y, y_prim = add_coma_to_str(x), add_coma_to_str(y), add_coma_to_str(y_prim)
+    return [len(x.split(",")), len(y.split(",")), len(y_prim.split(","))].count(
+        len(x.split(","))
+    ) == 3
+
+
+def str_to_float_list(xs: str) -> List[float]:
+    return [float(xi) for xi in xs.split(",") if xi != " " and xi != ""]
+
+
+def generate_vals_and_derives(xs: List[float], fun_type: str) -> Tuple[str, str]:
+    y_str, y_prim_str = "", ""
+    if fun_type == "4x^2 - 15x + 2":
+        y = [4 * xi ** 2 - 15 * xi + 2 for xi in xs]
+        y_prim = [8 * xi - 15 for xi in xs]
+    elif fun_type == "0.78^x":
+        y = [0.78 ** xi for xi in xs]
+        y_prim = [xi * 0.78 ** (xi - 1) for xi in xs]
+    elif fun_type == "-7x^3 + 12x^2 - 19x + 3":
+        y = [-7 * xi ** 3 + 12 * xi ** 2 - 19 * xi + 3 for xi in xs]
+        y_prim = [-21 * xi ** 2 + 24 * xi - 19 for xi in xs]
+    elif fun_type == "1/(1+25x^2)":
+        y = [1 / (1 + 25 * xi ** 2) for xi in xs]
+        y_prim = [-(50 * xi) / (1 + 25 * xi ** 2) ** 2 for xi in xs]
+    elif fun_type == "2x^3/3":
+        y = [(8 * xi ** 3) / 12 for xi in xs]
+        y_prim = [2 * xi ** 2 for xi in xs]
+    for i in range(len(y)):
+        y_str += f"{y[i]}, "
+        y_prim_str += f"{y_prim[i]}, "
+    return y_str, y_prim_str
 
 
 def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
@@ -256,7 +276,7 @@ def compare_fun_and_interpolation_plot(
     delta_y: List[float],
     var_nodes: bool,
     nodes_x,
-    nodes_y
+    nodes_y,
 ) -> None:
     """Generuje wykres porównawczy funkcji wejściowej i wielomianu interpolacyjnego"""
     fig, axs = plt.subplots(2)
