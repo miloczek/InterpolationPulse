@@ -60,6 +60,7 @@ def make_ones(s: str) -> str:
 
 
 def return_next_not_empty_char(word: str) -> str:
+    """Zwraca następny niepusty znak stringa."""
     return next(s for s in word.split() if s)
 
 
@@ -117,12 +118,18 @@ def eval_fun_with_prec(f: str, x: float, precision: int) -> float:
     return round(eval(f), precision)
 
 
+def round_list_of_floats(xs: List[float], prec: int) -> List[float]:
+    return [round(xi, prec) for xi in xs]
+
+
 def add_coma_to_str(xs: str) -> str:
+    """Dodaje na koniec stringa przecienk, jeśli string go nie posiada."""
     xs = xs if xs.endswith(",") else xs + ","
     return xs
 
 
 def check_if_nodes_and_values_are_equal(x: str, y: str, y_prim: str) -> bool:
+    """Sprawdza czy trzy listy są równoliczne."""
     x, y, y_prim = add_coma_to_str(x), add_coma_to_str(y), add_coma_to_str(y_prim)
     return [len(x.split(",")), len(y.split(",")), len(y_prim.split(","))].count(
         len(x.split(","))
@@ -130,10 +137,12 @@ def check_if_nodes_and_values_are_equal(x: str, y: str, y_prim: str) -> bool:
 
 
 def str_to_float_list(xs: str) -> List[float]:
+    """Konwertuje listę stringów na listę floatów."""
     return [float(xi) for xi in xs.split(",") if xi != " " and xi != ""]
 
 
 def generate_vals_and_derives(xs: List[float], fun_type: str) -> Tuple[str, str]:
+    """Tworzy listy wartości i pochodnych funkcji fun_type w punktach xs."""
     y_str, y_prim_str = "", ""
     if fun_type == "4x^2 - 15x + 2":
         y = [4 * xi ** 2 - 15 * xi + 2 for xi in xs]
