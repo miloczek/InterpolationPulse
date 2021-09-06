@@ -63,7 +63,7 @@ def create_hermite_polynomial(
     if x == "" or y == "" or y_prim == "":
         lbl_info.config(text="Nie wprowadzono danych", fg="red")
         return
-    elif not check_if_nodes_and_values_are_equal(x, y, y_prim):
+    elif not check_if_nodes_and_values_are_equal([x, y, y_prim]):
         lbl_info.config(text="Niezgodna ilość węzłów i wartości", fg="red")
         return
     else:

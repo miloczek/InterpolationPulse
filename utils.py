@@ -1,4 +1,5 @@
 import math
+from operator import le
 import tkinter as tk
 from tkinter import Label, constants
 from tkinter.constants import TRUE
@@ -128,12 +129,17 @@ def add_coma_to_str(xs: str) -> str:
     return xs
 
 
-def check_if_nodes_and_values_are_equal(x: str, y: str, y_prim: str) -> bool:
+def check_if_nodes_and_values_are_equal(list_str: List[str]) -> bool:
     """Sprawdza czy trzy listy są równoliczne."""
-    x, y, y_prim = add_coma_to_str(x), add_coma_to_str(y), add_coma_to_str(y_prim)
-    return [len(x.split(",")), len(y.split(",")), len(y_prim.split(","))].count(
-        len(x.split(","))
-    ) == 3
+    formatted = [add_coma_to_str(item) for item in list_str]
+    if len(list_str) == 3:
+        return [
+            len(formatted[0].split(",")),
+            len(formatted[1].split(",")),
+            len(formatted[2].split(",")),
+        ].count(len(formatted[0].split(","))) == 3
+    elif len(list_str) == 2:
+        return len(formatted[0].split(",")) == len(formatted[1].split(","))
 
 
 def str_to_float_list(xs: str) -> List[float]:
