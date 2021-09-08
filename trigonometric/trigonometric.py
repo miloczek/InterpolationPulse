@@ -1,5 +1,8 @@
+from typing_extensions import IntVar
 import numpy as np
 import math
+
+from numpy.core.fromnumeric import var
 import utils
 import matplotlib.pyplot as plt
 from numpy.lib import polynomial
@@ -10,17 +13,15 @@ PI = np.pi
 SMALL_FLOAT = 1e-3
 
 
-class Trygonometric:
+class Trigonometric:
     """Reprezentacja wielomianu trygonometrycznego."""
 
-    def __init__(self, f: str, n: str) -> None:
-        n = int(n)
-        self.n = n + 1 if n % 2 == 0 else n
-        self.x_points = np.linspace(-10, 10, n)
-        self.points, self.f = utils.compute_y(self.x_points, f)
+    def __init__(self, x: str, y: str) -> None:
+        self.x, self.points = utils.str_to_float_list(x), utils.str_to_float_list(y)
+        self.n = len(self.x)
         self.aj_coofs, self.bj_coofs = self.generate_a_b_c_cooficients()
-        self.trygonometric_polynomial = (
-            self.show_interpolation_trygonometric_polynomial()
+        self.trigonometric_polynomial = (
+            self.show_interpolation_trigonometric_polynomial()
         )
 
     def create_aj_cooficients(
@@ -55,10 +56,10 @@ class Trygonometric:
         iteration_start = -(n - 1) // 2
         iteration_end = (n - 1) // 2 + 1
 
-        trygonometric_vals = complex(np.cos(2 * PI / n), np.sin(2 * PI / n))
+        trigonometric_vals = complex(np.cos(2 * PI / n), np.sin(2 * PI / n))
         fourier_matrix = np.array(
             [
-                [trygonometric_vals ** (j * k) for j in range(n)]
+                [trigonometric_vals ** (j * k) for j in range(n)]
                 for k in range(iteration_start, iteration_end)
             ]
         )
@@ -83,33 +84,34 @@ class Trygonometric:
     def generate_a_b_c_cooficients(self) -> Tuple[np.array, np.array]:
         """Koordynuje generację współczynników potrzebnych do stworzenia wielomianu interpolacyjnego"""
         cj_coofs = self.create_cj_cooficients()
-        mid_interval_index = math.floor(len(cj_coofs) / 2)
+        mid_interval_index = math.floor(len(self.x) / 2)
 
         aj_coofs = self.create_aj_cooficients(cj_coofs, mid_interval_index)
         bj_coofs = self.create_bj_cooficients(cj_coofs, mid_interval_index)
 
         return self.replace_small_imag_with_real(aj_coofs, bj_coofs)
 
-    def show_interpolation_trygonometric_polynomial(self) -> str:
+    def show_interpolation_trigonometric_polynomial(self) -> str:
         """Tworzy tekstową reprezentację trygonometrycznego wielomianu interpolacyjnego."""
         polynomial = f"{self.aj_coofs[0]} / 2 "
         for i in range(1, len(self.aj_coofs)):
             polynomial += f"+ {self.aj_coofs[i]} * cos({i} * x) + {self.bj_coofs[i]} * sin({i} * x) "
         return polynomial
 
-    def eval_sin_cos_representation(self, x):
-        """Wylicza kolejną wartość wilomianu interpolacyjnego."""
+    def eval_polynomial_value(self, x):
+        """Wylicza kolejną wartość wielomianu interpolacyjnego."""
         return self.aj_coofs[0] / 2 + sum(
             self.aj_coofs[n] * np.cos(n * x) + self.bj_coofs[n] * np.sin(n * x)
             for n in range(1, len(self.aj_coofs))
         )
 
-    def interpolation_plot(self, a: float, b: float) -> None:
+    def interpolation_plot(self, a: float, b: float, var_nodes: IntVar) -> None:
         """Generuje wykres trygonometrycznego wielomianu interpolacyjnego."""
         x = np.linspace(a, b, 10000)
-        y = [self.eval_sin_cos_representation(i) for i in x]
+        y = [self.eval_polynomial_value(i) for i in x]
         plt.suptitle("Wykres funkcji interpolacyjnej")
         plt.grid(True)
         plt.plot(x, y)
-        plt.scatter(self.x_points, self.points, c="black")
+        if var_nodes.get():
+            plt.scatter(self.x, self.points, c="black")
         plt.show()

@@ -76,6 +76,14 @@ def prepare_to_show_natural_polynomial(
     return y
 
 
+def generate_pi_nodes( n: int) -> str:
+    """Generuje zestaw równoodległych węzłów postaci 2kπ/n"""
+    nodes_str = ""
+    for i in range(n):
+        nodes_str += f"{((2*i*PI)/n)},"
+    return nodes_str
+
+
 def prepare_to_show_newton_polynomial(
     x: Union[Tuple[Any, Union[Any, float]], Any],
     coefficients_b: List[float],

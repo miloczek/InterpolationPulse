@@ -6,7 +6,7 @@ from lagrange.lagrange_inteface import lagrange_interpolation
 from polynomial.polynomial_interface import polynomial_parse
 from nifs3.nifs3_interface import nifs3_interpolation
 from hermite.hermite_interface import hermite_interpolation
-from trygonometric.trygonometric_interface import trygonometric_interpolation
+from trigonometric.trigonometric_interface import trigonometric_interpolation
 from chebyshev.chebyshev_interface import chebyshev_polynomials
 
 
@@ -52,7 +52,7 @@ def main(window: tk.Tk) -> None:
         window,
         text="Interpolacja trygonometryczna",
         font=("Helvetica", "16"),
-        command=lambda: trygonometric_interpolation(window),
+        command=lambda: trigonometric_interpolation(window),
     )
 
     btn_chebyshev = tk.Button(
