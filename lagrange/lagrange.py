@@ -30,19 +30,27 @@ class Lagrange:
             self.lagrange_polynomial = self.make_interpolation_str_polynomial()
 
     def plot_basic_function_in_linear_area(
-        self, a: float, b: float, var_nodes: IntVar
+        self, a: float, b: float, var_nodes: IntVar, linspace: str
     ) -> None:
         """Generuje wykres funkcji wejściowej."""
-        x = numpy.linspace(a, b, 10000)
+        x = (
+            numpy.linspace(a, b, 1000)
+            if linspace == ""
+            else numpy.linspace(a, b, int(linspace))
+        )
         if var_nodes.get():
             plt.scatter(self.x, self.y, c="black")
         utils.basic_fun_plot(x, utils.eval_fun(self.f, x))
 
     def plot_lagrange_in_linear_area(
-        self, a: float, b: float, var_nodes: IntVar
+        self, a: float, b: float, var_nodes: IntVar, linspace: str
     ) -> None:
         """Generuje wykres obliczonego wielomianu Lagange'a."""
-        x = numpy.linspace(a, b, 10000)
+        x = (
+            numpy.linspace(a, b, 1000)
+            if linspace == ""
+            else numpy.linspace(a, b, int(linspace))
+        )
         if self.prec:
             y = [
                 self.eval_interpolation_polynomial_y_value_with_prec(i, self.prec)
@@ -55,10 +63,14 @@ class Lagrange:
         utils.basic_fun_plot(x, y)
 
     def plot_compare_plot_in_linear_area(
-        self, a: float, b: float, var_nodes: IntVar
+        self, a: float, b: float, var_nodes: IntVar, linspace: str
     ) -> None:
         """Generuje wykres porównawczy funkcji wejściowej i wielomianu Lagrange'a."""
-        x = numpy.linspace(a, b, 10000)
+        x = (
+            numpy.linspace(a, b, 1000)
+            if linspace == ""
+            else numpy.linspace(a, b, int(linspace))
+        )
         if self.prec:
             y = [
                 self.eval_interpolation_polynomial_y_value_with_prec(i, self.prec)

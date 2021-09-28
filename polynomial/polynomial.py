@@ -143,12 +143,12 @@ class Polynomial:
                 a[k] = a[k] + (xi * a[k + 1])
         self.natural_coefficients = a
 
-    def plot_natural_form(self, a: float, b: float) -> None:
+    def plot_natural_form(self, a: float, b: float, linspace: str) -> None:
         """Generuje wykres postaci naturalnej wielomianu."""
-        utils.show_natural_polynomial(a, b, self.natural_coefficients)
+        utils.show_natural_polynomial(a, b, linspace, self.natural_coefficients)
 
-    def plot_newton_form(self, a: float, b: float) -> None:
+    def plot_newton_form(self, a: float, b: float, linspace: str) -> None:
         """Generuje wykres postaci Newtona wielomianu."""
         utils.show_newton_polynomial(
-            a, b, self.newton_coefficients[1], self.newton_coefficients[0]
+            a, b, linspace, self.newton_coefficients[1], self.newton_coefficients[0]
         )

@@ -76,7 +76,7 @@ def prepare_to_show_natural_polynomial(
     return y
 
 
-def generate_pi_nodes( n: int) -> str:
+def generate_pi_nodes(n: int) -> str:
     """Generuje zestaw równoodległych węzłów postaci 2kπ/n"""
     nodes_str = ""
     for i in range(n):
@@ -99,19 +99,33 @@ def prepare_to_show_newton_polynomial(
     return y
 
 
-def show_natural_polynomial(a: float, b: float, coefficients: List[float]) -> None:
+def show_natural_polynomial(
+    a: float, b: float, linspace: str, coefficients: List[float]
+) -> None:
     """Generuje wielomian w postaci naturalnej."""
-    x = numpy.linspace(a, b, 10000)
+    x = (
+        numpy.linspace(a, b, 1000)
+        if linspace == ""
+        else numpy.linspace(a, b, int(linspace))
+    )
     plt.plot(x, prepare_to_show_natural_polynomial(x, coefficients))
     plt.grid(True)
     plt.show()
 
 
 def show_newton_polynomial(
-    a: float, b: float, coefficients_b: List[float], coefficients_x: List[float]
+    a: float,
+    b: float,
+    linspace: str,
+    coefficients_b: List[float],
+    coefficients_x: List[float],
 ) -> None:
     """Generuje wielomian w postaci Newtona."""
-    x = numpy.linspace(a, b, 10000)
+    x = (
+        numpy.linspace(a, b, 1000)
+        if linspace == ""
+        else numpy.linspace(a, b, int(linspace))
+    )
     plt.plot(x, prepare_to_show_newton_polynomial(x, coefficients_b, coefficients_x))
     plt.grid(True)
     plt.show()
@@ -320,7 +334,7 @@ def chebyshev_nodes(n: int, a: float, b: float) -> List[float]:
     """Generuje węzły na podstawie miejsc zerowych wielomianów Czebyszewa."""
     delta1 = (b - a) / 2
     delta2 = (b + a) / 2
-    f = [math.cos((i + 0.5) * PI / n) * delta1 + delta2 for i in range(1, n + 1)]
+    f = [math.cos((i + 0.5) * PI / n) * delta1 + delta2 for i in range(n)]
     return sorted(f)
 
 
@@ -338,7 +352,7 @@ def random_nodes(n: int, a: float, b: float) -> List[float]:
 
 def chebyshev_plot(a: float, b: float, n1: int, n2: int) -> None:
     """Generuje wykresy kolejnych węzłów Czebyszewa."""
-    x = numpy.linspace(a, b, 10000)
+    x = numpy.linspace(a, b, 1000)
     if n1 < 0 or n2 < 0:
         raise ValueError
     for i in range(n1, n2 + 1):

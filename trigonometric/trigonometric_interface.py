@@ -22,14 +22,18 @@ def generate_nodes(lbl_info: tk.Label, n: str, etr_box_x: tk.Entry) -> None:
 
 
 def prepare_interval_values(
-    entry: tk.Entry, info: tk.Label, poly: Trigonometric, var_nodes: IntVar
+    entry: tk.Entry,
+    info: tk.Label,
+    poly: Trigonometric,
+    var_nodes: IntVar,
+    linspace: str,
 ) -> None:
     """Wczytuje wartości brzegowe przedziału z pola tekstowego i
     uruchamia wizualizację funkcji"""
     try:
         a, b = tuple(entry.get().split(","))
         info.config(text="Poprawnie wygenerowano wykres", fg="green")
-        poly.interpolation_plot(float(a), float(b), var_nodes)
+        poly.interpolation_plot(float(a), float(b), var_nodes, linspace)
 
     except Exception as e:
         info.config(text="Wprowadź dobry przedział", fg="red")
@@ -40,13 +44,19 @@ def plot_generator(poly: Trigonometric, var_nodes: IntVar) -> None:
     """Funkcja wczytująca zakres i generująca wykres."""
     side_window = tk.Tk()
     side_window.title("Plot generator")
-    side_window.geometry("600x400")
+    side_window.geometry("700x600")
     lbl_instruction = tk.Label(
         side_window,
-        text="Podaj zakres w postaci [a, b]: ",
+        text="Podaj zakres w postaci: a, b ",
         font=("Helvetica", "24"),
     )
     etr_box_a_b = tk.Entry(side_window, width=100)
+    lbl_linspace = tk.Label(
+        side_window,
+        text="Podaj liczbę punktów w przestrzeni liniowej wykresu (pole puste = 1000)",
+        font=("Helvetica", "15"),
+    )
+    etr_box_linspace = tk.Entry(side_window, width=20)
     lbl_info = tk.Label(
         side_window,
         text="",
@@ -56,11 +66,19 @@ def plot_generator(poly: Trigonometric, var_nodes: IntVar) -> None:
         side_window,
         text="Generuj",
         font=("Helvetica", "16"),
-        command=lambda: prepare_interval_values(etr_box_a_b, lbl_info, poly, var_nodes),
+        command=lambda: prepare_interval_values(
+            etr_box_a_b,
+            lbl_info,
+            poly,
+            var_nodes,
+            str(etr_box_linspace.get()),
+        ),
     )
 
     lbl_instruction.pack()
     etr_box_a_b.pack()
+    lbl_linspace.pack()
+    etr_box_linspace.pack()
     lbl_info.pack()
     btn_generate_plot.pack()
     side_window.mainloop()
@@ -86,7 +104,7 @@ def create_trigonometric_interpolation(
         lbl_info.config(text="Nie wprowadzono danych", fg="red")
         return
     elif not check_if_nodes_and_values_are_equal([x, y]):
-        lbl_info.config(text="Niezgodna ilość węzłów i wartości", fg="red")
+        lbl_info.config(text="Niezgodna liczba węzłów i wartości", fg="red")
         return
     else:
         try:

@@ -23,7 +23,7 @@ def main(window: tk.Tk) -> None:
     lbl_instruction.pack()
     btn_lagrange = tk.Button(
         window,
-        text="Interpolacja Lagrange'a",
+        text="Interpolacja w postaci Lagrange'a",
         font=("Helvetica", "16"),
         command=lambda: lagrange_interpolation(window),
     )

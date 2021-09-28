@@ -36,7 +36,7 @@ def chebyshev_polynomials(window: tk.Tk) -> None:
 
     lbl_instr_n = tk.Label(
         window,
-        text="Podaj przedział stopni wielomianów w postaci [a, b]: ",
+        text="Podaj przedział stopni wielomianów w postaci: a, b ",
         font=("Helvetica", "16"),
     )
 
@@ -44,7 +44,7 @@ def chebyshev_polynomials(window: tk.Tk) -> None:
 
     lbl_instr_a_b = tk.Label(
         window,
-        text="Podaj zakres w postaci [a, b]: ",
+        text="Podaj zakres w postaci: a, b ",
         font=("Helvetica", "16"),
     )
 

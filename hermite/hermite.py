@@ -50,30 +50,41 @@ class Hermite:
         return result
 
     def plot_basic_function_in_linear_area(
-        self, a: float, b: float, fun_str: str, var_nodes: IntVar
+        self, a: float, b: float, fun_str: str, var_nodes: IntVar, linspace: str
     ) -> None:
         """Generuje wykres funkcji wejściowej."""
-        x = numpy.linspace(a, b, 10000)
+        x = (
+            numpy.linspace(a, b, 1000)
+            if linspace == ""
+            else numpy.linspace(a, b, int(linspace))
+        )
         if var_nodes.get():
             plt.scatter(self.x, self.y, c="black")
         utils.basic_fun_plot(x, utils.eval_fun(fun_str, x))
 
     def plot_hermite_in_linear_area(
-        self, a: float, b: float, var_nodes: IntVar
+        self, a: float, b: float, var_nodes: IntVar, linspace: str
     ) -> None:
         """Generuje wykres obliczonego wielomianu Hermite'a."""
-        x = numpy.linspace(a, b, 1000)
+        x = (
+            numpy.linspace(a, b, 1000)
+            if linspace == ""
+            else numpy.linspace(a, b, int(linspace))
+        )
         y = [self.eval_interpolation_polynomial_y_value(i) for i in x]
         if var_nodes.get():
             plt.scatter(self.x, self.y, c="black")
         utils.basic_fun_plot(x, y)
 
     def plot_compare_plot_in_linear_area(
-        self, a: float, b: float, fun_str: str, var_nodes: IntVar
+        self, a: float, b: float, fun_str: str, var_nodes: IntVar, linspace: str
     ) -> None:
         """Generuje wykres porównawczy funkcji wejściowej i wielomianu Hermite'a."""
-        x = numpy.linspace(a, b, 1000)
-
+        x = (
+            numpy.linspace(a, b, 1000)
+            if linspace == ""
+            else numpy.linspace(a, b, int(linspace))
+        )
         y = [self.eval_interpolation_polynomial_y_value(i) for i in x]
         delta_y = [abs(y[i] - utils.eval_fun(fun_str, xi)) for i, xi in enumerate(x)]
         var_nodes = var_nodes.get()

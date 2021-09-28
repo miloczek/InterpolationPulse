@@ -11,14 +11,14 @@ def generate_natural_form(poly: Polynomial) -> None:
     """Przedstawia na ekranie wielomian w naturalnej postaci sprowadzony z postaci Newtona."""
     side_window = tk.Tk()
     side_window.title("Generated natural form polynomial")
-    side_window.geometry("600x400")
+    side_window.geometry("700x600")
     text = Text(side_window)
     text.insert(INSERT, poly.show_natual_form())
     text.pack()
 
 
 def create_natural_newton_polynomial(
-    lbl_info: tk.Label, interval: str, f: str, form: str
+    lbl_info: tk.Label, interval: str, f: str, linspace: str, form: str
 ) -> None:
     """Na podstawie wczytanego wielomianu i przedziału generujejego wykres."""
     if interval == "" or f == "":
@@ -31,11 +31,14 @@ def create_natural_newton_polynomial(
             a, b = interval.split(",")
             lbl_info.config(text="Poprawnie wczytano dane", fg="green")
             if form == "natural":
-                polynomial.plot_natural_form(float(a), float(b))
+                polynomial.plot_natural_form(float(a), float(b), linspace)
             else:
-                polynomial.plot_newton_form(float(a), float(b))
+                polynomial.plot_newton_form(float(a), float(b), linspace)
         except Exception as e:
-            lbl_info.config(text="Błędne dane, przy węzłach losowych może być konieczne ponowne wygenerowanie", fg="red")
+            lbl_info.config(
+                text="Błędne dane",
+                fg="red",
+            )
             print(e)
             return
 
@@ -47,7 +50,7 @@ def newton_form() -> None:
     polynomial = ""
     side_window = tk.Tk()
     side_window.title("Newton form to natural form")
-    side_window.geometry("600x400")
+    side_window.geometry("700x600")
     lbl_instruction = tk.Label(
         side_window,
         text="Podaj wielomian w postaci Newtona",
@@ -62,14 +65,21 @@ def newton_form() -> None:
             lbl_info,
             str(etr_box_a_b.get()),
             str(etr_box_nat.get()),
+            str(etr_box_linspace.get()),
             "newton",
         ),
     )
     lbl_interval = tk.Label(
         side_window,
-        text="Podaj zakres w postaci [a, b]: ",
+        text="Podaj zakres w postaci: a, b ",
         font=("Helvetica", "24"),
     )
+    lbl_linspace = tk.Label(
+        side_window,
+        text="Podaj liczbę punktów w przestrzeni liniowej wykresu (pole puste = 1000)",
+        font=("Helvetica", "15"),
+    )
+    etr_box_linspace = tk.Entry(side_window, width=20)
     etr_box_a_b = tk.Entry(side_window, width=100)
     lbl_info = tk.Label(
         side_window,
@@ -90,6 +100,8 @@ def newton_form() -> None:
     etr_box_nat.pack()
     lbl_interval.pack()
     etr_box_a_b.pack()
+    lbl_linspace.pack()
+    etr_box_linspace.pack()
     lbl_info.pack()
     btn_load.pack()
     btn_generate.pack()
@@ -103,13 +115,19 @@ def natural_form() -> None:
     polynomial = ""
     side_window = tk.Tk()
     side_window.title("Natural form")
-    side_window.geometry("600x400")
+    side_window.geometry("700x600")
     lbl_instruction = tk.Label(
         side_window,
         text="Podaj wielomian w postaci naturalnej",
         font=("Helvetica", "24"),
     )
     etr_box_nat = tk.Entry(side_window, width=100)
+    lbl_linspace = tk.Label(
+        side_window,
+        text="Podaj liczbę punktów w przestrzeni liniowej wykresu (pole puste = 1000)",
+        font=("Helvetica", "15"),
+    )
+    etr_box_linspace = tk.Entry(side_window, width=20)
     btn_load = tk.Button(
         side_window,
         text="Wczytaj wielomian i wygeneruj wykres",
@@ -118,12 +136,13 @@ def natural_form() -> None:
             lbl_info,
             str(etr_box_a_b.get()),
             str(etr_box_nat.get()),
+            str(etr_box_linspace.get()),
             "natural",
         ),
     )
     lbl_interval = tk.Label(
         side_window,
-        text="Podaj zakres w postaci [a, b]: ",
+        text="Podaj zakres w postaci: a, b ",
         font=("Helvetica", "24"),
     )
     etr_box_a_b = tk.Entry(side_window, width=100)
@@ -137,6 +156,8 @@ def natural_form() -> None:
     etr_box_nat.pack()
     lbl_interval.pack()
     etr_box_a_b.pack()
+    lbl_linspace.pack()
+    etr_box_linspace.pack()
     lbl_info.pack()
     btn_load.pack()
 

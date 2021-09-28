@@ -64,7 +64,7 @@ def create_hermite_polynomial(
         lbl_info.config(text="Nie wprowadzono danych", fg="red")
         return
     elif not check_if_nodes_and_values_are_equal([x, y, y_prim]):
-        lbl_info.config(text="Niezgodna ilość węzłów i wartości", fg="red")
+        lbl_info.config(text="Niezgodna liczba węzłów i wartości", fg="red")
         return
     else:
         try:
@@ -91,6 +91,7 @@ def prepare_interval_values(
     mode: str,
     fun_str: str,
     var_nodes: IntVar,
+    linspace: str,
 ) -> None:
     """Wczytuje wartości brzegowe przedziału z pola tekstowego i
     uruchamia wizualizację funkcji"""
@@ -107,13 +108,13 @@ def prepare_interval_values(
         info.config(text="Poprawnie wygnerowano wykres", fg="green")
         if mode == "normal":
             poly.plot_basic_function_in_linear_area(
-                float(a), float(b), fun_str, var_nodes
+                float(a), float(b), fun_str, var_nodes, linspace
             )
         elif mode == "hermite":
-            poly.plot_hermite_in_linear_area(float(a), float(b), var_nodes)
+            poly.plot_hermite_in_linear_area(float(a), float(b), var_nodes, linspace)
         else:
             poly.plot_compare_plot_in_linear_area(
-                float(a), float(b), fun_str, var_nodes
+                float(a), float(b), fun_str, var_nodes, linspace
             )
     except Exception as e:
         info.config(text="Wprowadź dobry przedział", fg="red")
@@ -124,13 +125,19 @@ def plot_generator(poly: Hermite, mode: str, fun_str: str, var_nodes: IntVar) ->
     """Funkcja wczytująca zakres i generująca wykres."""
     side_window = tk.Tk()
     side_window.title("Plot generator")
-    side_window.geometry("600x400")
+    side_window.geometry("700x600")
     lbl_instruction = tk.Label(
         side_window,
-        text="Podaj zakres w postaci [a, b]: ",
+        text="Podaj zakres w postaci: a, b ",
         font=("Helvetica", "24"),
     )
     etr_box_a_b = tk.Entry(side_window, width=100)
+    lbl_linspace = tk.Label(
+        side_window,
+        text="Podaj liczbę punktów w przestrzeni liniowej wykresu (pole puste = 1000)",
+        font=("Helvetica", "15"),
+    )
+    etr_box_linspace = tk.Entry(side_window, width=20)
     lbl_info = tk.Label(
         side_window,
         text="",
@@ -141,12 +148,20 @@ def plot_generator(poly: Hermite, mode: str, fun_str: str, var_nodes: IntVar) ->
         text="Generuj",
         font=("Helvetica", "16"),
         command=lambda: prepare_interval_values(
-            etr_box_a_b, lbl_info, poly, mode, fun_str, var_nodes
+            etr_box_a_b,
+            lbl_info,
+            poly,
+            mode,
+            fun_str,
+            var_nodes,
+            str(etr_box_linspace.get()),
         ),
     )
 
     lbl_instruction.pack()
     etr_box_a_b.pack()
+    lbl_linspace.pack()
+    etr_box_linspace.pack()
     lbl_info.pack()
     btn_generate_plot.pack()
     side_window.mainloop()
@@ -192,7 +207,7 @@ def hermite_interpolation(window: tk.Tk) -> None:
 
     lbl_instr_x = tk.Label(
         window,
-        text="Podaj węzły w postaci [x0, x1, ...]: ",
+        text="Podaj węzły w postaci: x0, x1, ... ",
         font=("Helvetica", "12"),
     )
 
@@ -200,7 +215,7 @@ def hermite_interpolation(window: tk.Tk) -> None:
 
     lbl_instr_y = tk.Label(
         window,
-        text="Podaj wartości w węzłach w postaci [y0, y1, ...]: ",
+        text="Podaj wartości w węzłach w postaci: y0, y1, ... ",
         font=("Helvetica", "12"),
     )
 
@@ -208,7 +223,7 @@ def hermite_interpolation(window: tk.Tk) -> None:
 
     lbl_instr_y_prim = tk.Label(
         window,
-        text="Podaj wartości pochodnych w węzłach w postaci [y'0, y'1, ...]: ",
+        text="Podaj wartości pochodnych w węzłach w postaci: y'0, y'1, ... ",
         font=("Helvetica", "12"),
     )
 
@@ -216,7 +231,7 @@ def hermite_interpolation(window: tk.Tk) -> None:
 
     lbl_instr_prec = tk.Label(
         window,
-        text="Podaj precyzję (ilość miejsc po przecinku) [pole puste, dla maksymalnej dokładności]: ",
+        text="Podaj precyzję (liczba miejsc po przecinku) [pole puste, dla maksymalnej dokładności]: ",
         font=("Helvetica", "12"),
     )
 
@@ -304,7 +319,7 @@ def hermite_interpolation(window: tk.Tk) -> None:
 
     lbl_instr_nodes_n = tk.Label(
         window,
-        text="Podaj ilość węzłów: ",
+        text="Podaj liczbę węzłów: ",
         font=("Helvetica", "12"),
     )
 
@@ -312,7 +327,7 @@ def hermite_interpolation(window: tk.Tk) -> None:
 
     lbl_instr_nodes_interval = tk.Label(
         window,
-        text="Podaj przedział węzłów [a,b]: ",
+        text="Podaj przedział węzłów: a, b ",
         font=("Helvetica", "12"),
     )
 

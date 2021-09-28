@@ -105,9 +105,15 @@ class Trigonometric:
             for n in range(1, len(self.aj_coofs))
         )
 
-    def interpolation_plot(self, a: float, b: float, var_nodes: IntVar) -> None:
+    def interpolation_plot(
+        self, a: float, b: float, var_nodes: IntVar, linspace: str
+    ) -> None:
         """Generuje wykres trygonometrycznego wielomianu interpolacyjnego."""
-        x = np.linspace(a, b, 10000)
+        x = (
+            np.linspace(a, b, 1000)
+            if linspace == ""
+            else np.linspace(a, b, int(linspace))
+        )
         y = [self.eval_polynomial_value(i) for i in x]
         plt.suptitle("Wykres funkcji interpolacyjnej")
         plt.grid(True)

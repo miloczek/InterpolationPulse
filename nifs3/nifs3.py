@@ -34,10 +34,14 @@ class Nifs3:
         self.prepare_polynomial_string()
 
     def plot_basic_function_in_linear_area(
-        self, a: float, b: float, var_nodes: IntVar
+        self, a: float, b: float, var_nodes: IntVar, linspace: str
     ) -> None:
         """Generuje wykres funkcji wejściowej."""
-        x = np.linspace(a, b, 10000)
+        x = (
+            np.linspace(a, b, 1000)
+            if linspace == ""
+            else np.linspace(a, b, int(linspace))
+        )
         if var_nodes.get():
             plt.scatter(self.x, self.y, c="black")
         utils.basic_fun_plot(x, utils.eval_fun(self.f, x))
@@ -50,7 +54,7 @@ class Nifs3:
         plt.show()
 
     def plot_compare_plot_in_linear_area(self, var_nodes: IntVar) -> None:
-        """Generuje wykres porównawczy funkcji wejściowej i wielomianów NIFS3 dla 3 węzłów."""
+        """Generuje wykres porównawczy funkcji wejściowej i wielomianów NIFS3."""
         delta_y = [
             abs(self.S_i[i] - utils.eval_fun(self.f, xi))
             for i, xi in enumerate(self.x0)
@@ -121,6 +125,8 @@ class Nifs3:
             return M
 
     def put_xs_in_correct_order(self) -> np.array:
+        """Porządkuje punkty x, potrzebne do wyświetlenia wykresu, pomiędzy węzłami."""
+
         def find_i(x, xs):
             for i in range(len(xs)):
                 if x <= xs[i]:
@@ -130,6 +136,7 @@ class Nifs3:
         return np.clip([find_i(i, self.x) for i in self.x0], 1, len(self.x) - 1)
 
     def prepare_polynomial_string(self):
+        """Generuje wielomiany w formie tekstowej wraz z przedziałami."""
         poly_str = ""
         j = 0
         n = len(self.x)
