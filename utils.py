@@ -1,8 +1,6 @@
 import math
-from operator import le
 import tkinter as tk
-from tkinter import Label, constants
-from tkinter.constants import TRUE
+from tkinter.constants import N, TRUE
 from typing import Any, List, Tuple, Union
 import random
 
@@ -65,17 +63,6 @@ def return_next_not_empty_char(word: str) -> str:
     return next(s for s in word.split() if s)
 
 
-def prepare_to_show_natural_polynomial(
-    x: Union[Tuple[Any, Union[Any, float]], Any], coefficients: List[float]
-) -> float:
-    """Na podstawie współczynników, zwraca wielomian w postaci naturalnej."""
-    n = len(coefficients)
-    y = 0
-    for i in range(n):
-        y += coefficients[i] * x ** i
-    return y
-
-
 def generate_pi_nodes(n: int) -> str:
     """Generuje zestaw równoodległych węzłów postaci 2kπ/n"""
     nodes_str = ""
@@ -84,19 +71,26 @@ def generate_pi_nodes(n: int) -> str:
     return nodes_str
 
 
-def prepare_to_show_newton_polynomial(
+def simple_horner_evaluation(x: float, coefficients: List[float]) -> float:
+    """Wyznacza wartość wielomianu w punkcie x, używając schematu Hornera."""
+    w = coefficients[-1]
+    for i in range(len(coefficients) - 2, -1, -1):
+        w = w * x + coefficients[i]
+    return w
+
+
+def generalized_horner_evaluation(
     x: Union[Tuple[Any, Union[Any, float]], Any],
     coefficients_b: List[float],
     coefficients_x: List[float],
 ) -> float:
-    """Na podstawie współczynników, zwraca wielomian w postaci Newtona."""
-    n = len(coefficients_x)
-    p = 1
-    y = coefficients_b[0]
-    for i in range(n):
-        p *= x + coefficients_x[i]
-        y += coefficients_b[i + 1] * p
-    return y
+    """Wyznacza wartość wielomianu w punkcie x, używając uogólnionego schematu Hornera."""
+    n = len(coefficients_b)
+    l = [0 for i in range(n)]
+    l[n - 1] = coefficients_b[-1]
+    for i in range(n - 2, -1, -1):
+        l[i] = l[i + 1] * (x - coefficients_x[i]) + coefficients_b[i]
+    return l[0]
 
 
 def show_natural_polynomial(
@@ -108,7 +102,7 @@ def show_natural_polynomial(
         if linspace == ""
         else numpy.linspace(a, b, int(linspace))
     )
-    plt.plot(x, prepare_to_show_natural_polynomial(x, coefficients))
+    plt.plot(x, simple_horner_evaluation(x, coefficients))
     plt.grid(True)
     plt.show()
 
@@ -126,13 +120,16 @@ def show_newton_polynomial(
         if linspace == ""
         else numpy.linspace(a, b, int(linspace))
     )
-    plt.plot(x, prepare_to_show_newton_polynomial(x, coefficients_b, coefficients_x))
+    plt.plot(x, generalized_horner_evaluation(x, coefficients_b, coefficients_x))
     plt.grid(True)
     plt.show()
 
 
 def eval_fun(f: str, x: Union[float, numpy.ndarray]) -> float:
     """Oblicza funkcję f na podstawie zaaplikowanego x."""
+    print(f)
+    print(x)
+    print("!" * 60)
     return eval(f)
 
 
@@ -197,11 +194,31 @@ def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
     """Parsuje i oblicza ostateczną wartość funkcji."""
     proper_f = ""
     negative_power_or_div = False
+    sin_number, cos_number, tg_number, ctg_number = False, False, False, False
     f = f.replace(" ", "")
     for index, char in enumerate(f):
         if char == "p":
             proper_f += "numpy.pi"
-        elif char == "i" or char == " ":
+        elif char == "e":
+            proper_f += "math.exp(1)"
+        elif char == "s":
+            sin_number = True
+        elif char == "(" and (sin_number or cos_number or tg_number or ctg_number):
+            nested_numbers = ""
+        elif char == ")" and sin_number:
+            sin_number = False
+            proper_f += f"numpy.sin({nested_numbers})"
+            nested_numbers = ""
+        elif (
+            char == "x"
+            or char == "*"
+            or char == "/"
+            or char == "+"
+            or char == "-"
+            or char.isnumeric()
+        ) and (sin_number or cos_number or tg_number or ctg_number):
+            nested_numbers += char
+        elif char == "i" or char == " " or char == "n":
             continue
         elif char == "^":
             if return_next_not_empty_char(f[index + 1 :]).startswith(
@@ -317,7 +334,6 @@ def compare_fun_and_interpolation_plot(
 ) -> None:
     """Generuje wykres porównawczy funkcji wejściowej i wielomianu interpolacyjnego"""
     fig, axs = plt.subplots(2)
-
     fig.suptitle("Wykres porównawczy (góra), wykres błędu (dół)")
     axs[0].plot(x, y1, label="f. wyjściowa")
     axs[0].plot(x, y2, label="w. interpolacyjny")

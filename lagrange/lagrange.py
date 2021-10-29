@@ -80,6 +80,7 @@ class Lagrange:
             y = [self.eval_interpolation_polynomial_y_value(i) for i in x]
         delta_y = [abs(y[i] - utils.eval_fun(self.f, xi)) for i, xi in enumerate(x)]
         var_nodes = var_nodes.get()
+        print("DUPA")
         utils.compare_fun_and_interpolation_plot(
             x, utils.eval_fun(self.f, x), y, delta_y, var_nodes, self.x, self.y
         )
