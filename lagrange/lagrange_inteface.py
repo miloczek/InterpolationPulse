@@ -21,34 +21,22 @@ def prepare_interval_values(
 ) -> None:
     """Wczytuje wartości brzegowe przedziału z pola tekstowego i
     uruchamia wizualizację funkcji"""
-    a, b = tuple(entry.get().split(","))
-    if mode == "normal":
-        poly.plot_basic_function_in_linear_area(
-            float(a), float(b), var_nodes, linspace
-        )
-    elif mode == "lagrange":
-        poly.plot_lagrange_in_linear_area(float(a), float(b), var_nodes, linspace)
-    else:
-        poly.plot_compare_plot_in_linear_area(
-            float(a), float(b), var_nodes, linspace
-        )
-    info.config(text="Poprawnie wygnerowano wykres", fg="green")
-    # try:
-    #     a, b = tuple(entry.get().split(","))
-    #     if mode == "normal":
-    #         poly.plot_basic_function_in_linear_area(
-    #             float(a), float(b), var_nodes, linspace
-    #         )
-    #     elif mode == "lagrange":
-    #         poly.plot_lagrange_in_linear_area(float(a), float(b), var_nodes, linspace)
-    #     else:
-    #         poly.plot_compare_plot_in_linear_area(
-    #             float(a), float(b), var_nodes, linspace
-    #         )
-    #     info.config(text="Poprawnie wygnerowano wykres", fg="green")
-    # except Exception as e:
-    #     info.config(text="Wprowadź dobry przedział", fg="red")
-    #     print(e)
+    try:
+        a, b = tuple(entry.get().split(","))
+        if mode == "normal":
+            poly.plot_basic_function_in_linear_area(
+                float(a), float(b), var_nodes, linspace
+            )
+        elif mode == "lagrange":
+            poly.plot_lagrange_in_linear_area(float(a), float(b), var_nodes, linspace)
+        else:
+            poly.plot_compare_plot_in_linear_area(
+                float(a), float(b), var_nodes, linspace
+            )
+        info.config(text="Poprawnie wygnerowano wykres", fg="green")
+    except Exception as e:
+        info.config(text="Wprowadź dobry przedział", fg="red")
+        print(e)
 
 
 def plot_generator(poly: Lagrange, mode: str, var_nodes: IntVar) -> None:

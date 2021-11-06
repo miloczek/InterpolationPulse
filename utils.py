@@ -127,9 +127,6 @@ def show_newton_polynomial(
 
 def eval_fun(f: str, x: Union[float, numpy.ndarray]) -> float:
     """Oblicza funkcję f na podstawie zaaplikowanego x."""
-    print(f)
-    print(x)
-    print("!" * 60)
     return eval(f)
 
 
@@ -194,7 +191,7 @@ def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
     """Parsuje i oblicza ostateczną wartość funkcji."""
     proper_f = ""
     negative_power_or_div = False
-    sin_number, cos_number, tg_number, ctg_number = False, False, False, False
+    sin_number, cos_number, tg_number = False, False, False
     f = f.replace(" ", "")
     for index, char in enumerate(f):
         if char == "p":
@@ -203,11 +200,23 @@ def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
             proper_f += "math.exp(1)"
         elif char == "s":
             sin_number = True
-        elif char == "(" and (sin_number or cos_number or tg_number or ctg_number):
+        elif char == "c":
+            cos_number = True
+        elif char == "t":
+            tg_number = True
+        elif char == "(" and (sin_number or cos_number or tg_number):
             nested_numbers = ""
         elif char == ")" and sin_number:
             sin_number = False
             proper_f += f"numpy.sin({nested_numbers})"
+            nested_numbers = ""
+        elif char == ")" and cos_number:
+            cos_number = False
+            proper_f += f"numpy.cos({nested_numbers})"
+            nested_numbers = ""
+        elif char == ")" and tg_number:
+            tg_number = False
+            proper_f += f"numpy.tan({nested_numbers})"
             nested_numbers = ""
         elif (
             char == "x"
@@ -216,9 +225,17 @@ def compute_y(x: List[float], f: str) -> Tuple[List[float]]:
             or char == "+"
             or char == "-"
             or char.isnumeric()
-        ) and (sin_number or cos_number or tg_number or ctg_number):
+        ) and (sin_number or cos_number or tg_number):
             nested_numbers += char
-        elif char == "i" or char == " " or char == "n":
+        elif (
+            char == "i"
+            or char == " "
+            or char == "n"
+            or char == "a"
+            or char == "o"
+            or char == "g"
+            or (char == "s" and cos_number)
+        ):
             continue
         elif char == "^":
             if return_next_not_empty_char(f[index + 1 :]).startswith(
